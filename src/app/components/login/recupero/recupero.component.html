@@ -1,0 +1,59 @@
+<div fxFlexFill fxLayout="column" fxLayoutGap="1rem" class="container">
+  <div fxFlex="0 0 auto">
+    <div class="login-img-container">
+      <div class="login-img"></div>
+    </div>
+  </div>
+  <div fxFlex fxLayoutAlign="center">
+    <form
+      #form="ngForm"
+      (ngSubmit)="recupero()"
+      fxFlex="40"
+      fxFlex.lt-sm="90"
+      novalidate>
+      <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="2rem">
+        <div fxFlex="25%">
+          <img src="assets/images/icon-login.svg">
+        </div>
+        <div fxFlex fxHide.xs>
+          <h2 class="text-white text-right">{{ 'system-long-name' | translate }}</h2>
+        </div>
+        <!-- mostrar solo nombre corto si la resolucion es menor a 600 -->
+        <div fxFlex fxHide.gt-xs>
+          <h2 class="text-white text-right">{{ 'system-short-name' | translate }}</h2>
+        </div>
+
+
+      </div>
+      <div fxLayout="row wrap" fxLayoutGap="2rem">
+        <div fxFlex>
+          <mat-form-field fxFlexFill [floatLabel]="'always'">
+            <mat-label class="text-white">{{ 'usuario-recupero' | translate }}</mat-label>
+            <input
+              matInput
+              [(ngModel)]="user"
+              name="user"
+              class="login-input">
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="2rem" fxShow.gt-sm>
+        <div fxFlex>
+          <button
+            fxFlexFill
+            mat-raised-button
+            [disabled]="form.invalid"
+            color="primary">
+            {{ 'login.recupero' | translate }}
+          </button>
+        </div>
+      </div>
+      <mat-error *ngIf="!form.invalid && errorMessage">
+        {{ errorMessage }}
+      </mat-error>
+      <button mat-button (click)="openSnackBar('Party', 'act')">Show snack-bar</button>
+    </form>
+
+  
+  </div>
+</div>

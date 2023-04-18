@@ -1,0 +1,44 @@
+{
+  "rules": {
+    "align": [true, "elements", "members", "parameters", "statements"],
+    "interface-name" : [true, "never-prefix"],
+    "lines-between-class-members": true,
+    "max-classes-per-file": false,
+    "max-line-length": false,
+    "member-ordering": [true, {"order": "fields-first"}],
+    "no-console": false,
+    "no-inferrable-types": true,
+    "no-string-literal": true,
+    "object-curly-spacing": [true, "never"],
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "space-before-function-paren": false,
+    "trailing-comma": [true, {
+      "singleline": "never",
+      "multiline": {
+        "objects": "always",
+        "arrays": "always",
+        "functions": "never",
+        "typeLiterals": "ignore"
+      }
+    }],
+    "typedef": [true, "call-signature", "parameter"],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+    // Rxjs rules
+    "rxjs-collapse-imports": true,
+    "rxjs-no-static-observable-methods": true,
+    "rxjs-pipeable-operators-only": true,
+    "rxjs-proper-imports": true
+  },
+  "rulesDirectory": [
+    "./node_modules/codelyzer",
+    "./node_modules/rxjs-tslint",
+    "./node_modules/tslint-lines-between-class-members"
+  ],
+  "extends": [
+    "tslint:recommended",
+    "tslint-eslint-rules",
+    "tslint-config-airbnb",
+    "tslint-angular"
+  ]
+}

@@ -1,0 +1,13 @@
+<!-- <h2 mat-dialog-title class="mat-card-subtitle"><span>{{ 'configuration.email.bocaEntrega' | translate }}</span></h2> -->
+<div flexLayout="column">
+  <mat-form-field>
+    <mat-label>{{ 'configuration.email.bocaEntrega' | translate }}</mat-label>
+    <mat-select [value]="'none'" [disabled]="bocas.length == 0">
+      <mat-option [value]="'none'" (click)="resetBoca()">{{ 'seleccionar' | translate}}</mat-option>
+      <mat-option *ngFor="let boca of bocas" [value]="boca.codigoBocaEntrega + '-' + boca.descripcion"
+        (click)="selectBoca(boca)">
+        {{ boca.codigoBocaEntrega + ' - ' + boca.descripcion }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

@@ -1,0 +1,167 @@
+<mat-expansion-panel #panel *ngIf="tableTemplate" class="gefco-filters">
+  <mat-expansion-panel-header collapsedHeight="36px" expandedHeight="36px">
+    <mat-panel-title>
+      {{ 'filtros' | translate }}
+    </mat-panel-title>
+    <mat-panel-description *ngIf="filtersCount > 0">
+      {{ 'filtros-aplicados' | translate }}: {{ filtersCount }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <div fxLayout="column" fxLayoutGap="1rem">
+ 
+    <div fxLayout="row wrap" class="content">
+      <ng-container *ngFor="let tableColumn of tableTemplate.columns">
+        <div *ngIf="tableColumn.column" fxLayout="row" fxLayoutGap="1rem">
+          <div fxFlex="0 0 auto">
+            <mat-form-field fxFlexFill>
+              <input matInput value="{{ tableColumn.name | translate }}" name="{{ tableColumn.attribute }}" disabled>
+            </mat-form-field>
+          </div>
+          <div fxFlex="0 0 auto">  <!-- aca son los operadores -->
+            <mat-form-field fxFlexFill class="operator-input">
+              <mat-select [(ngModel)]="tableColumn.filter.operator" name="{{ tableColumn.attribute }}Operator"
+                placeholder="{{ 'operador' | translate }}"
+                (SelectionChange)="changeValue($event)">
+                <ng-container *ngFor="let operator of operators">
+                  <mat-option
+                    *ngIf="shouldShowOperator(tableColumn, operator) && showOnlyOperators(tableColumn,operator)"
+                    [value]="operator.id">
+                    {{ operator.name }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>     
+          <div fxLayout="row wrap"> <!-- aca el valor de los operadores -->
+            <ng-container
+              *ngIf="tableColumn.filter.operator !== 'TODOS' && tableColumn.filter.operator !== 'VACIO' && tableColumn.filter.operator !== 'NO_VACIO'">
+              <mat-form-field *ngIf="tableColumn.type === 'BOOLEAN' && !getMetadataComponent(tableColumn)" fxFlexFill>
+                <mat-select [(ngModel)]="tableColumn.filter.value">
+                  <mat-option [value]="true">{{ 'si' | translate }}</mat-option>
+                  <mat-option [value]="false">{{ 'no' | translate }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field *ngIf="tableColumn.type === 'STRING' && getMetadataComponent(tableColumn) === 'text' && tableColumn.filter.operator != 'EN'"
+                fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.value" name="{{ tableColumn.attribute }}Value"
+                  placeholder="{{ 'valor' | translate }}">
+              </mat-form-field> 
+
+                  
+                  <mat-form-field  *ngIf="tableColumn.type === 'STRING' && !getMetadataComponent(tableColumn) && tableColumn.filter.operator !== 'EN'"  fxFlexFill >
+                    <input matInput [(ngModel)]="tableColumn.filter.value" name="{{ tableColumn.attribute }}Value"
+                      placeholder="{{ 'valor' | translate }}">   
+                  </mat-form-field>
+                   <!-- /////////////////////////////// -->
+                  <div fxFlexFill *ngIf="tableColumn.filter.operator === 'EN'">
+                    <section>
+                      <mat-form-field>
+                        <input matInput [(ngModel)]="tableColumn.filter.arrayValue[0]" name="{{ tableColumn.attribute }}arrayValue[0]"
+                          placeholder="{{ 'valor' | translate }}">   
+                      </mat-form-field>
+                    </section>
+
+                      <section>
+                        <tr *ngFor="let valores of tableColumn.filter.arrayInputs, let i=index" >
+                          <mat-form-field >
+                            <input matInput [(ngModel)]="tableColumn.filter.arrayValue[i+1]" name="{{ tableColumn.attribute }}arrayValue[i+1]"
+                              placeholder="{{ 'valor' | translate }}">                           
+                          </mat-form-field>
+                        </tr>  
+                  </section> 
+                </div>
+
+                <!-- /////////////////////////////// -->
+              <mat-form-field
+                *ngIf="(tableColumn.type === 'INTEGER' || tableColumn.type === 'LONG' || tableColumn.type === 'DOUBLE' || tableColumn.type === 'BIG_DECIMAL') && !getMetadataComponent(tableColumn)"
+                fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.value" type="number"
+                  name="{{ tableColumn.attribute }}Value" placeholder="{{ 'valor' | translate }}">
+              </mat-form-field>
+              <mat-form-field
+                *ngIf="(tableColumn.type === 'DATE' || tableColumn.type === 'DATE_TIME') && !getMetadataComponent(tableColumn)"
+                fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.value" [matDatepicker]="picker" (click)="picker.open()"
+                  placeholder="{{ 'elige-una-fecha' | translate }}">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field *ngIf="getMetadataComponent(tableColumn) === 'select'" fxFlexFill>
+                <mat-select [(ngModel)]="getMetadataValue(tableColumn).item" [compareWith]="compareMetadataItem"
+                  (selectionChange)="onMetadataItemSelected(tableColumn, $event.value)"
+                  placeholder="{{ getMetadataValue(tableColumn).placeholder | translate }}">
+                  <app-gefco-mat-filter [array]="getMetadataValue(tableColumn).items" [converter]="displayMetadataItem"
+                    placeholder="{{ 'buscar' | translate }}">
+                  </app-gefco-mat-filter>
+                  <mat-option *ngFor="let item of getMetadataValue(tableColumn).items" [value]="item">
+                    {{ displayMetadataItem(item) }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field *ngIf="getMetadataComponent(tableColumn) === 'autocomplete'" fxFlexFill>
+                <input matInput [(ngModel)]="getMetadataValue(tableColumn).filter" [matAutocomplete]="autocomplete"
+                  [disabled]="viewing" (keyup)="filterMetadataItems(tableColumn)"
+                  placeholder="{{ getMetadataValue(tableColumn).placeholder | translate }}" autocomplete="new-password">
+                <mat-autocomplete #autocomplete="matAutocomplete" [displayWith]="displayMetadataItem"
+                  (optionSelected)="onMetadataItemSelected(tableColumn, $event.option.value)">
+                  <mat-option *ngFor="let item of getMetadataValue(tableColumn).items" [value]="item">
+                    {{ displayMetadataItem(item) }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </ng-container>
+          </div>
+          <div fxLayout="row wrap">
+            <ng-container *ngIf="tableColumn.filter.operator === 'ENTRE'">
+              <mat-form-field
+                *ngIf="(tableColumn.type === 'DATE' || tableColumn.type === 'DATE_TIME') && !getMetadataComponent(tableColumn)"
+                fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.otherValue" [matDatepicker]="otherPicker"
+                  (click)="otherPicker.open()" placeholder="{{ 'elige-una-fecha' | translate }}">
+                <mat-datepicker-toggle matSuffix [for]="otherPicker"></mat-datepicker-toggle>
+                <mat-datepicker #otherPicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field *ngIf="tableColumn.type === 'STRING' && !getMetadataComponent(tableColumn)" fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.otherValue" name="{{ tableColumn.attribute }}otherValue"
+                  placeholder="{{ 'valor' | translate }}">
+              </mat-form-field>
+              <mat-form-field
+                *ngIf="(tableColumn.type === 'INTEGER' || tableColumn.type === 'LONG' || tableColumn.type === 'DOUBLE' || tableColumn.type === 'BIG_DECIMAL') && !getMetadataComponent(tableColumn)"
+                 fxFlexFill>
+                <input matInput [(ngModel)]="tableColumn.filter.otherValue" type="number"
+                  name="{{ tableColumn.attribute }}otherValue" placeholder="{{ 'valor' | translate }}">
+              </mat-form-field>
+            </ng-container>
+          </div>
+          <!-- ///////////////////////////////// -->
+          <div fxLayout="row wrap">
+            <ng-container *ngIf ="tableColumn.filter.operator === 'EN'">
+              <div fxFlexFill >
+                <button mat-button (click)="addValor(tableColumn)">
+                  <mat-icon>add</mat-icon>
+                </button>               
+                <tr *ngFor="let valores of tableColumn.filter.arrayInputs, let i=index" >
+                  <button mat-button (click)="quitarImput(tableColumn, i)" style="margin-top:20px">
+                    <mat-icon>minimize</mat-icon>
+                  </button>
+                </tr>
+              </div>
+            </ng-container>
+          </div> 
+          <!-- //////////////////////////////////// -->
+        </div>
+      </ng-container>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1rem">
+      <button mat-raised-button (click)="onSearch(true)" color="primary">
+        {{ 'buscar' | translate }}
+      </button>
+      <button *ngIf="filtersCount > 0" mat-raised-button (click)="onClear()" color="basic">
+        {{ 'limpiar-filtros' | translate }}
+      </button>
+      <mat-checkbox [(ngModel)]="keepOpened">
+        {{ 'mantener-filtros-visibles' | translate }}
+      </mat-checkbox>
+    </div>
+  </div>
+</mat-expansion-panel>

@@ -1,0 +1,45 @@
+<div fxFlexFill fxLayout="column" fxLayoutGap="0.5rem">
+  <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+  <div fxFlex="0 0 auto" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1rem">
+    <div>
+      <a
+        (click)="openDialog()"
+        mat-raised-button
+        color="primary">
+        {{ 'nuevo' | translate }}
+      </a>
+    </div>
+    <app-gefco-template
+      [templates]="allTemplates"
+      [template]="currentTemplate"
+      (create)="onTemplateCreate($event)"
+      (update)="onTemplateUpdate($event)"
+      (delete)="onTemplateDelete($event)"
+      (select)="onTemplateSelect($event)"
+      (restart)="onTemplateRestart()">
+    </app-gefco-template>
+  </div>
+  <app-gefco-filters
+    [template]="currentTemplate"
+    (search)="onFilterSearch($event)">
+  </app-gefco-filters>
+  <div fxLayout="row" fxLayoutGap="1rem">
+    <div fxFlex="70">
+      <app-gefco-table
+        [template]="currentTemplate"
+        [rows]="rows"
+        [showEditIcon]="false"
+        [showDeleteIcon]="false"
+        [listPermission]="listPermission"
+        [writePermission]="writePermission"
+        [readPermission]="readPermission"
+        (exportTable)="onExportTable($event)"
+        (selectRow)="onSelectRow($event)"
+        (viewRow)="openDialog($event, true)">
+      </app-gefco-table>
+    </div>
+    <div fxFlex="30">
+      <app-permisos-rol #permisosRol id="permisosRol"></app-permisos-rol>
+    </div>
+  </div>
+</div>

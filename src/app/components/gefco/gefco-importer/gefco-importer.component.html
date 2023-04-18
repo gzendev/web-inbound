@@ -1,0 +1,19 @@
+<button
+  mat-raised-button
+  [matMenuTriggerFor]="appMenu"
+  [disabled]="!data"
+  color="primary">
+  {{ 'import' | translate }}
+</button>
+<mat-menu #appMenu="matMenu">
+  <button
+    mat-menu-item
+    (click)="downloadTemplate()">
+    {{ 'download-template' | translate }}
+  </button>
+  <button
+    mat-menu-item
+    (click)="openDialog()">
+    {{ 'import-file' | translate }}
+  </button>
+</mat-menu>

@@ -1,0 +1,54 @@
+<div *ngIf="!loading" fxLayout="column" fxLayoutGap="0.5rem" fxFlexFill>
+    <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+    <div fxFlex="0 0 auto" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="1rem">
+      <app-gefco-template
+        [templates]="allTemplates"
+        [template]="currentTemplate"
+        (create)="onTemplateCreate($event)" 
+        (update)="onTemplateUpdate($event)"
+        (select)="onTemplateSelect($event)"
+        (restart)="onTemplateRestart()"
+        (delete)="onTemplateDelete($event)">
+      </app-gefco-template>
+    </div>
+    <app-gefco-filters
+      [template]="currentTemplate"
+      [metadata]="filtersMetadata"
+      (search)="onFilterSearch($event)">
+    </app-gefco-filters>
+    <app-gefco-table
+      [template]="currentTemplate"
+      [rows]="rows"
+      [listPermission]="listPermission"
+      [writePermission]="writePermission"
+      [readPermission]="readPermission"
+      (exportTable)="onExportTable($event)"
+      (viewRow)="onViewRow($event)"
+      (mapRow)="onMapRow($event)"
+      [showEditIcon]="false"
+      [showDeleteIcon]="false"
+      [menu]="showMenu ? inboundMenu : null"
+      [showEditAll]="showEditAll">
+    </app-gefco-table>
+  </div>
+
+  <ng-template #inboundMenu let-row="row">
+    <button mat-menu-item *ngIf="hasGestionGefcoOvs" (click)="inboundGefcoOvs(row,'edit')">
+      Actualizar Gestion Gefco OVS
+    </button>
+    <button mat-menu-item *ngIf="hasGestionPuertoAeropuerto" (click)="inboundPuertoAeropuerto(row,'edit')">
+      Actualizar Gestion en puerto/aeropuerto
+    </button>
+    <button mat-menu-item *ngIf="hasGestionGefcoIjda" (click)="inboundGefcoIjda(row,'edit')">
+      Actualizar Gestion Gefco en IJDA
+    </button>
+    <button mat-menu-item *ngIf="hasGestionIjda" (click)="inboundIjda(row,'edit')">
+      Actualizar Gestion IJDA
+    </button>
+    <button mat-menu-item *ngIf="hasGestionDespachantes" (click)="inboundDespachantes(row,'edit')">
+      Actualizar Gestion Despachantes
+    </button>
+    <button mat-menu-item *ngIf="hasAlmacenRepuestosIjda" (click)="inboundAlmacenRepuestosIjda(row,'edit')">
+        Actualizar Gestion almacen/repuestos IJDA
+      </button>
+  </ng-template>

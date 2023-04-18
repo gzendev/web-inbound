@@ -1,0 +1,121 @@
+<ng-container *ngIf="!uploading">
+  <h2 mat-dialog-title>{{ 'puntos.import.select-file' | translate }}</h2>
+  <div fxLayout="column" fxLayoutGap="1rem">
+    <mat-select
+      *ngIf="dialogData && dialogData.data"
+      [(ngModel)]="selectedAccount"
+      placeholder="{{ 'cuenta' | translate }}">
+      <mat-option *ngFor="let option of dialogData.data;" [value]="option">
+        {{ option.label | translate }}
+      </mat-option>
+    </mat-select>
+    <input
+      #file
+      (change)="onFileAdded()"
+      type="file"
+      style="display: none"
+      accept=".xls,.xlsx,.xlsm"/>
+    <button
+      mat-raised-button
+      (click)="addFiles()"
+      color="primary"
+      class="add-files-btn">
+      {{ 'puntos.import.select-file' | translate }}
+    </button>
+    <h4 *ngIf="selectedFile" mat-line>{{ selectedFile.name }}</h4>
+  </div>
+  <mat-dialog-actions align="center">
+    <button
+      mat-raised-button
+      mat-dialog-close
+      type="button"
+      color="basic">
+      {{ 'cancelar' | translate }}
+    </button>
+    <button
+      mat-raised-button
+      [disabled]="!selectedFile || !selectedAccount"
+      (click)="processFile()"
+      color="primary">
+      {{ 'puntos.import.process' | translate }}
+    </button>
+  </mat-dialog-actions>
+</ng-container>
+<ng-container *ngIf="uploading">
+  <h2 mat-dialog-title>{{ 'puntos.import.title.process' | translate }}</h2>
+  <mat-progress-bar *ngIf="progress" mode="determinate" [value]="progress | async"></mat-progress-bar>
+  <h3 *ngIf="uploadSuccessful">{{ 'puntos.import.title.upload-success' | translate }}</h3>
+  <h3 *ngIf="uploadError">{{ 'puntos.import.title.upload-error' | translate }}</h3>
+  <mat-dialog-content>
+    <div *ngIf="uploadError && showErrors" class="table-container">
+      <table id="errorTable" mat-table [dataSource]="uploadErrors">
+        <ng-container matColumnDef="fila">
+          <th mat-header-cell *matHeaderCellDef>{{ 'puntos.import.tabla.fila' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element[0] }}</td>
+        </ng-container>
+        <ng-container matColumnDef="solapa">
+          <th mat-header-cell *matHeaderCellDef>{{ 'puntos.import.tabla.solapa' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element[1] }}</td>
+        </ng-container>
+        <ng-container matColumnDef="error">
+          <th mat-header-cell *matHeaderCellDef>{{ 'puntos.import.tabla.error' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element[2] | translate }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-dialog-content>
+  <button
+    *ngIf="uploadError && showErrors"
+    fxFlexFill
+    mat-raised-button
+    (click)="exportTable()"
+    color="primary">
+    {{ 'download' | translate }}
+  </button>
+</ng-container>
+<mat-dialog-actions *ngIf="uploadError && showErrors" align="center">
+  <button
+    mat-raised-button
+    (click)="back()"
+    type="button"
+    color="basic">
+    {{ 'volver' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    (click)="reprocess()"
+    color="primary">
+    {{ 'puntos.import.reprocess' | translate }}
+  </button>
+</mat-dialog-actions>
+<mat-dialog-actions *ngIf="uploadError && !showErrors" align="center">
+  <button
+    mat-raised-button
+    (click)="back()"
+    type="button"
+    color="basic">
+    {{ 'volver' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    (click)="showErrors = true"
+    type="button"
+    color="basic">
+    {{ 'puntos.import.view-errors' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    (click)="processFile(true)"
+    color="primary">
+    {{ 'puntos.import.import-w-error' | translate }}
+  </button>
+</mat-dialog-actions>
+<mat-dialog-actions *ngIf="uploadSuccessful" align="center">
+  <button
+    mat-raised-button
+    mat-dialog-close>
+    {{ 'aceptar' | translate }}
+  </button>
+</mat-dialog-actions>

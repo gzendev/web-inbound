@@ -1,0 +1,42 @@
+<div *ngIf="currentLastLog" class="audit">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header collapsedHeight="36px" expandedHeight="36px">
+      <mat-panel-title>
+        {{ 'auditoria' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div fxLayout="column" fxLayoutGap="1rem">
+      <div fxLayout="row wrap" fxLayoutAlign="flex-start center" fxLayoutGap="2rem">
+        <div fxFlex>
+          <label>{{ 'fecha-ultima-modificacion' | translate }}</label>
+          <p class="m-0 font-weight-light">{{ currentLastLog.fechaUltimaModificacion | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+        </div>
+        <div fxFlex>
+          <label>{{ 'usuario-ultima-modificacion' | translate }}</label>
+          <p class="m-0 font-weight-light">{{ currentLastLog.usuarioUltimaModificacion }}</p>
+        </div>
+        <div fxFlex>
+          <button
+            mat-raised-button
+            (click)="loadLogs()"
+            color="primary">
+            {{ 'log' | translate }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="logs && logs.length === 0" class="jumbotron">
+        <h3 class="mb-0 text-center">{{ 'no-hay-registros' | translate }}</h3>
+      </div>
+      <div *ngIf="logs && logs.length > 0" class="table-container small-height">
+        <table fxFlexFill mat-table fxFlexFill [dataSource]="logs">
+          <ng-container *ngFor="let tableColumn of tableColumns" [matColumnDef]="tableColumn">
+            <th mat-header-cell *matHeaderCellDef>{{ tableColumn |translate }}</th>
+            <td mat-cell *matCellDef="let log">{{ log[tableColumn] }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let log; columns: tableColumns;"></tr>
+        </table>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</div>

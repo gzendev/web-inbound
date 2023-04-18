@@ -1,0 +1,130 @@
+<mat-menu #languageMenu="matMenu">
+  <button
+    mat-menu-item
+    [ngClass]="{'state-highlight': idioma === 'es'}"
+    [disabled]="idioma === 'es'"
+    (click)="setIdioma('es', true)">
+    <span>{{ 'espanol' | translate }}</span>
+  </button>
+  <button
+    mat-menu-item
+    [ngClass]="{'state-highlight': idioma === 'en'}"
+    [disabled]="idioma === 'en'"
+    (click)="setIdioma('en', true)">
+    <span>{{ 'ingles' | translate }}</span>
+  </button>
+  <button
+    mat-menu-item
+    [ngClass]="{'state-highlight': idioma === 'pt'}"
+    [disabled]="idioma === 'pt'"
+    (click)="setIdioma('pt', true)">
+    <span>{{ 'portugues' | translate }}</span>
+  </button>
+</mat-menu>
+<mat-menu #profileMenu="matMenu">
+  <a mat-menu-item [href]="passwordResetUrl">
+    <mat-icon>person</mat-icon>
+    <span>{{ 'Administración de usuario' | translate }}</span>
+  </a>
+  <button mat-menu-item routerLink="/home/configuration" >
+    <mat-icon>settings</mat-icon>
+    <span>{{ 'config' | translate }}</span>
+  </button>
+</mat-menu>
+<mat-toolbar fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="1rem" color="primary">
+  <div fxFlex fxLayoutAlign="start center">
+    <button
+      mat-icon-button
+      (click)="sidenav.toggle()"
+      type="button">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="nav-brand">{{ 'system-short-name' | translate }}</span>
+  </div>
+  <div fxFlex="0 0 auto" fxLayoutAlign="center center">
+      <span fxHide.xs class="font-small">{{ username }} </span>
+      <span class="font-small">{{ userId }}</span>
+    </div>
+  <div fxFlex="0 0 auto" fxLayoutAlign="center center">
+    <span class="font-small">{{ enviroment }}</span>
+  </div>
+  <div fxFlex="0 0 auto" fxLayoutAlign="start center">
+    <a class="nav-icon cursor-pointer" [matMenuTriggerFor]="languageMenu">
+      <mat-icon matTooltip="{{ 'idioma' | translate }}">language</mat-icon>
+    </a>
+    <a fxHide.xs class="nav-icon cursor-pointer" [matMenuTriggerFor]="profileMenu">
+      <mat-icon matTooltip="{{ 'perfil-usuario' | translate }}">account_circle</mat-icon>
+    </a>
+    <a (click)="logout()" class="nav-icon">
+      <mat-icon matTooltip="{{ 'logout' | translate }}">exit_to_app</mat-icon>
+    </a>
+  </div>
+</mat-toolbar>
+
+
+<p-dialog [(visible)]="DialogChangePass" [style]="{width: '425px'}" [responsive]="true">
+  <p-header class="mat-h2" >
+     Cambio de Contraseña
+  </p-header>
+  <form 
+      #ngForm
+      
+      fxFlex="40"
+      fxFlex.lt-sm="90"
+      novalidate>
+      <div class="mat-form-field-infix">
+          <div fxFlex> 
+            <mat-form-field fxFlexFill [floatLabel]="'always'">
+              <mat-label class="text-black">Contraseña Anterior</mat-label>
+              <input
+              matInput
+              [(ngModel)]="older"
+              type="password"
+              name="older"
+              class="login-input" 
+              >
+            </mat-form-field>
+          </div>      
+          <div fxFlex>
+            <mat-form-field fxFlexFill [floatLabel]="'always'">
+              <mat-label class="text-black">Contraseña nueva</mat-label>
+              <input
+              matInput
+              [(ngModel)]="newer"
+              name="newer"
+              [type]="hide ? 'password' : 'text'"
+              class="login-input"
+              >
+              <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </mat-form-field>
+          </div> 
+      </div>
+      <div layout="row" layout-align="start right" color="primary">
+          <p-footer>
+           <hr> 
+         
+
+          <div fxFlex>
+            <button
+              *ngIf="true"
+              mat-raised-button
+              [disabled]="(!newer || !older)  "
+              (click)="updatePass()"
+              color="primary">
+              {{ 'confirmar' | translate }}
+            </button>
+          </div>
+            <!-- Boton VOLVER -->
+            <div fxFlex>
+            <button
+              mat-raised-button
+              (click)="showDialogChangePass()"
+              type="button"
+              color="basic">
+              {{ 'volver' | translate }}
+            </button>
+          </div>
+        </p-footer>
+      </div>
+  </form>
+</p-dialog>

@@ -1,0 +1,22 @@
+.title {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 3vh;
+  text-decoration: underline;
+}
+
+
+.form-field-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.form-field-group .form-field-label {
+    white-space: nowrap;
+  }
+  .form-field-group .form-field-label .form-field-label + mat-form-field {
+   margin-left: 10px;
+  }
+  .form-field-group .form-field-label .form-field-label mat-form-field {
+    width:100%;
+  }

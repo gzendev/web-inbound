@@ -1,0 +1,1597 @@
+<div *ngIf="loading" fxLayoutAlign="center center">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!loading" fxLayout="column" fxLayoutGap="1rem">
+  <div fxFlex="0 0 auto" fxHide.xs>
+      <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+  </div>
+  <h2 mat-dialog-title>
+    <span>{{ title | translate }}</span>
+  </h2>
+  <form #form="ngForm" novalidate>
+    <mat-dialog-content>
+      <mat-card class="inbound-card">
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Agente -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+                <input
+                    [(ngModel)]="inbound.agente"
+                    matInput
+                    placeholder="{{ 'inbound.agente' | translate }}"
+                    [disabled]="true"
+                    name="agente" />
+            </mat-form-field>
+          </div>
+          <!-- Negocio -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+                    <input
+                        [(ngModel)]="inbound.negocio"
+                        matInput
+                        placeholder="{{ 'inbound.negocio' | translate }}"
+                        [disabled]="true"
+                        name="negocio" />
+            </mat-form-field>
+          </div>
+          <!-- Status Comentarios -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+                    <input
+                        [(ngModel)]="inbound.statusComentarios"
+                        matInput
+                        placeholder="{{ 'inbound.statusComentarios' | translate }}"
+                        [disabled]="true"
+                        name="statusComentarios" />
+            </mat-form-field>
+          </div>
+          <!-- Proveedor -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+                  <input
+                      [(ngModel)]="inbound.proveedor"
+                      matInput
+                      placeholder="{{ 'inbound.proveedor' | translate }}"
+                      [disabled]="true"
+                      name="proveedor" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Numero Factura -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+                  <input
+                      [(ngModel)]="inbound.numeroFactura"
+                      matInput
+                      placeholder="{{ 'inbound.numeroFactura' | translate }}"
+                      [disabled]="true"
+                      name="numeroFactura" />
+            </mat-form-field>
+          </div>
+         
+          <!-- Date Eta -->
+          <div fxflex fxLayoutAlign="start center" *ngIf="(viewing || (gestion.id != 'gefcoIjda') && inbound.dateEta != multiple)">
+              <mat-form-field fxFlexFill>
+                <input 
+                  value="{{inbound.dateEta | date:'dd/MM/yyyy'}}" 
+                  matInput 
+                  placeholder="{{ 'inbound.dateEta' | translate }}" 
+                  readonly>
+              </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf="((viewing || (gestion.id != 'gefcoIjda')) && inbound.dateEta === multiple)">
+            <mat-form-field fxFlexFill>
+              <input 
+                value="{{inbound.dateEta}}" 
+                matInput 
+                placeholder="{{ 'inbound.dateEta' | translate }}" 
+                readonly>
+            </mat-form-field>
+        </div>
+        <div fxflex fxLayoutAlign="start center"  *ngIf="inbound.histCambioEta.length > 0" >
+          <button pButton type="button" title="Historico de cambio ETA" label="{{ inbound.histCambioEta.length }}"
+            class="ui-button-raised ui-button-rounded" [ngClass]="{'ui-button-warning': inbound.histCambioEta.length > 1}"
+            (click)="showDialog()" [disabled]="inbound.histCambioEta.length == 1">
+          </button>
+        </div>
+        
+        <!-- Contenedor -->
+          <div fxFlex *ngIf="viewing || (gestion.id != 'gefcoIjda')">
+            <mat-form-field fxFlexFill>
+                  <input
+                      [(ngModel)]="inbound.contenedor"
+                      matInput
+                      placeholder="{{ 'inbound.contenedor' | translate }}"
+                      [disabled]="true"
+                      name="contenedor" />
+            </mat-form-field>
+          </div>
+          <!-- medioDeTransporte -->
+          <div fxFlex *ngIf="viewing || (gestion.id != 'gefcoIjda')">
+            <mat-form-field fxFlexFill>
+              <input [(ngModel)]="inbound.medioDeTransporte" matInput
+              placeholder="{{ 'inbound.medioDeTransporte' | translate }}" [disabled]="true" name="medioDeTransporte" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!--Promesa salida puerto aeropuerto-->
+          <div fxflex="20" *ngIf="(viewing || (gestion.id != 'gefcoIjda') && inbound.gefRoPromSalPuertAeropuer != multiple)">
+            <mat-form-field fxFlexFill>
+              <input 
+                value="{{inbound.gefRoPromSalPuertAeropuer | date:'dd/MM/yyyy'}}" 
+                matInput 
+                placeholder="{{ 'inbound.gefRoPromSalPuertAeropuer' | translate }}" 
+                readonly>
+            </mat-form-field>
+        </div>
+        <div fxflex="20" *ngIf="((viewing || (gestion.id != 'gefcoIjda')) && inbound.gefRoPromSalPuertAeropuer === multiple)">
+          <mat-form-field fxFlexFill>
+            <input 
+              value="{{inbound.gefRoPromSalPuertAeropuer}}" 
+              matInput 
+              placeholder="{{ 'inbound.gefRoPromSalPuertAeropuer' | translate }}" 
+              readonly>
+          </mat-form-field>
+      </div>
+       <!--Promesa arriba a planta-->
+       <div fxflex="20" *ngIf="(viewing || (gestion.id != 'gefcoIjda') && inbound.gefJdPromesaArriboAPlanta != multiple)">
+          <mat-form-field fxFlexFill>
+            <input 
+              value="{{inbound.gefJdPromesaArriboAPlanta | date:'dd/MM/yyyy'}}" 
+              matInput 
+              placeholder="{{ 'inbound.gefJdPromesaArriboAPlanta' | translate }}" 
+              readonly>
+          </mat-form-field>
+      </div>
+      <div fxflex="20" *ngIf="((viewing || (gestion.id != 'gefcoIjda')) && inbound.gefJdPromesaArriboAPlanta === multiple)">
+        <mat-form-field fxFlexFill>
+          <input 
+            value="{{inbound.gefJdPromesaArriboAPlanta}}" 
+            matInput 
+            placeholder="{{ 'inbound.gefJdPromesaArriboAPlanta' | translate }}" 
+            readonly>
+        </mat-form-field>
+      </div>
+      <!--Fecha promesa Libreacion-->
+      <div fxflex="20"*ngIf="(viewing || (gestion.id != 'gefcoIjda') && inbound.despPromesaLiberacion != multiple)">
+          <mat-form-field fxFlexFill>
+            <input 
+              value="{{inbound.despPromesaLiberacion | date:'dd/MM/yyyy'}}" 
+              matInput 
+              placeholder="{{ 'inbound.despPromesaLiberacion' | translate }}" 
+              readonly>
+          </mat-form-field>
+      </div>
+      <div fxflex fxflex="20" *ngIf="((viewing || (gestion.id != 'gefcoIjda')) && inbound.despPromesaLiberacion === multiple)">
+        <mat-form-field fxFlexFill>
+          <input 
+            value="{{inbound.despPromesaLiberacion}}" 
+            matInput 
+            placeholder="{{ 'inbound.despPromesaLiberacion' | translate }}" 
+            readonly>
+        </mat-form-field>
+      </div>
+          <!-- CRITICO chip -->
+          <div fxflex="10"  *ngIf="inbound.comJdCritico === true">
+            <mat-chip-list>
+              <mat-chip color="warn" selected>CRITICO</mat-chip>
+            </mat-chip-list>
+          </div>
+          <!-- historico status liberacion-->
+          <div fxflex="20" *ngIf="viewing || (gestion.id != 'gefcoIjda')">
+            <mat-form-field fxFlexFill>
+              <input [(ngModel)]="inbound.despStatusLiberacion" matInput
+              placeholder="{{ 'inbound.despStatusLiberacion' | translate }}" [disabled]="true" name="despStatusLiberacion" />
+            </mat-form-field>
+          </div>
+          <div fxflex="10"  *ngIf="inbound.histEstadosLiberacion.length > 0" >
+            <button pButton type="button" title="Historico Estados de Liberación" label="{{ inbound.histEstadosLiberacion.length }}"
+              class="ui-button-raised ui-button-rounded" [ngClass]="{'ui-button-warning': inbound.histEstadosLiberacion.length > 1}"
+              (click)="showDialogEstLiberacion()" [disabled]="inbound.histEstadosLiberacion.length == 1">
+            </button>
+          </div>
+        </div>
+        <!-- historial de descarga-->
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <div fxflex="20">
+            <mat-form-field fxFlexFill>
+              <input
+                matInput
+                #almHistDescarga="ngModel"
+                [(ngModel)]="HistorialDescarga"
+                placeholder="Historial Solicitud Ingreso"
+                [disabled]="true"
+                name="a">
+              </mat-form-field>
+            </div>
+            <div fxflex fxLayoutAlign="start center"  *ngIf="inbound.histDescarga.length > 0" >
+              <button pButton type="button" title="Historico de cambio ETA" label="{{ inbound.histDescarga.length }}"
+                class="ui-button-raised ui-button-rounded" [ngClass]="{'ui-button-warning': inbound.histDescarga.length > 1}"
+                (click)="showDialogHistDescarga()" [disabled]="inbound.histDescarga.length == 1">
+              </button>
+            </div>
+          </div>
+        </mat-card>
+
+      <mat-divider></mat-divider>
+
+      <!-- Gestion Gefco OVS -->
+      <mat-card class="inbound-card" *ngIf="viewing || (gestion.id == 'gefcoOvs')">
+        <mat-card-subtitle>{{ 'inbound.title.gefcoOvs' | translate }}</mat-card-subtitle>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+            <!-- Gef ATA -->
+            <div fxflex fxLayoutAlign="start center" *ngIf="inbound.ata != multiple">
+              <mat-form-field fxFlexFil>
+                <input
+                  #ataInput = "ngModel"
+                  matInput
+                  [(ngModel)]="inbound.ata"
+                  [matDatepicker]="ataPicker"
+                  [disabled]="viewing"
+                  (click)="ataPicker.open()"
+                  name="ata"
+                  placeholder="{{ 'inbound.ata' | translate }}">
+                <mat-error *ngIf="ataInput.hasError('required')">
+                  {{ 'dato-requerido' | translate }}
+                </mat-error>
+                <mat-datepicker-toggle matSuffix [for]="ataPicker"></mat-datepicker-toggle>
+                <mat-datepicker #ataPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div *ngIf="inbound.ata == multiple">
+                <div fxFlex>
+                  <mat-form-field fxFlexFill>
+                  <input
+                    matInput
+                    #ataInput="ngModel"
+                    [(ngModel)]="inbound.ata"
+                    placeholder="{{ 'inbound.ata' | translate }}"
+                    [disabled]="true"
+                    name="ata">
+                </mat-form-field>
+                </div>
+                <fa-icon
+                    [icon]="['fas', 'pen']"
+                    [fixedWidth]="true"
+                    (click)="onEditRow('ata')"
+                    title="{{ 'editar' | translate }}"
+                    class="cursor-pointer">
+                  </fa-icon>
+              </div> 
+          </div>
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+              <!-- Gef Ro Bultos -->
+              <mat-form-field>
+                <input
+                  type="text"
+                  [(ngModel)]="inbound.gefRoBultos"
+                  matInput
+                  placeholder="{{ 'inbound.gefRoBultos' | translate }}"
+                  [disabled]="viewing"
+                  name="gefRoBultos"
+                  (keypress)="numberOnly($event)" />
+              </mat-form-field>
+
+              <!-- Gef Ro Peso Kg -->
+              <mat-form-field>
+                <input
+                  type="text"
+                  [(ngModel)]="inbound.gefRoPesoKg"
+                  matInput
+                  placeholder="{{ 'inbound.gefRoPesoKg' | translate }}"
+                  [disabled]="viewing"
+                  name="gefRoPesoKg" 
+                  (keypress)="numberOnly($event, inbound.gefRoPesoKg)"/>
+              </mat-form-field>
+               <!-- Gef Ro Volumen M3 -->
+              <mat-form-field>
+                <input
+                  type="text"
+                  [(ngModel)]="inbound.gefRoVolumenM3"
+                  matInput
+                  placeholder="{{ 'inbound.gefRoVolumenM3' | translate }}"
+                  [disabled]="viewing"
+                  name="gefRoVolumenM3"
+                  (keypress)="numberOnly($event, inbound.gefRoVolumenM3)" />
+              </mat-form-field>
+              <!-- Gef Ro Medidas -->
+              <mat-form-field>
+                <input
+                  [(ngModel)]="inbound.gefRoMedidas"
+                  matInput
+                  placeholder="{{ 'inbound.gefRoMedidas' | translate }}"
+                  [disabled]="viewing"
+                  maxlength="20"
+                  name="gefRoMedidas">
+            </mat-form-field>
+          </div>
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+              <!-- Gef Ro Turno Puerto -->
+              <div fxflex fxLayoutAlign="start center" *ngIf="inbound.gefRoTurnoPuerto != multiple">
+                <mat-form-field fxFlexFil>
+                  <input
+                    #gefRoTurnoPuertoInput = "ngModel"
+                    matInput
+                    [(ngModel)]="inbound.gefRoTurnoPuerto"
+                    [matDatepicker]="gefRoTurnoPuertoPicker"
+                    [disabled]="viewing"
+                    (click)="gefRoTurnoPuertoPicker.open()"
+                    name="gefRoTurnoPuerto"
+                    placeholder="{{ 'inbound.gefRoTurnoPuerto' | translate }}">
+                  <mat-error *ngIf="gefRoTurnoPuertoInput.hasError('required')">
+                    {{ 'dato-requerido' | translate }}
+                  </mat-error>
+                  <mat-datepicker-toggle matSuffix [for]="gefRoTurnoPuertoPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #gefRoTurnoPuertoPicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div *ngIf="inbound.gefRoTurnoPuerto == multiple">
+                  <div fxFlex>
+                    <mat-form-field fxFlexFill>
+                    <input
+                      matInput
+                      #gefRoTurnoPuertoInput="ngModel"
+                      [(ngModel)]="inbound.gefRoTurnoPuerto"
+                      placeholder="{{ 'inbound.gefRoTurnoPuerto' | translate }}"
+                      [disabled]="true"
+                      name="gefRoTurnoPuerto">
+                  </mat-form-field>
+                  </div>
+                  <fa-icon
+                      [icon]="['fas', 'pen']"
+                      [fixedWidth]="true"
+                      (click)="onEditRow('gefRoTurnoPuerto')"
+                      title="{{ 'editar' | translate }}"
+                      class="cursor-pointer">
+                    </fa-icon>
+                </div>
+                <!-- Gef Ro Turno Hora -->
+                <div fxflex fxLayoutAlign="start center">
+                  <p-calendar timeOnly="true" [(ngModel)]="inbound.gefRoTurnoHora"   name="gefRoTurnoHora" *ngIf= "inbound.gefRoTurnoHora != 'Invalid Date'" 
+                    placeholder="{{ 'inbound.gefRoTurnoHora' | translate }}" [disabled]="viewing"
+                    #gefRoTurnoHoraInput = "ngModel">
+                </p-calendar>
+            </div>
+            <div fxflex fxLayoutAlign="start center"  *ngIf= "inbound.gefRoTurnoHora == 'Invalid Date'" >
+              <mat-form-field fxFlexFil>
+                <input 
+                [(ngModel)]="inbound.gefRoTurnoHora"   name="gefRoTurnoHora" 
+                  value="Múltiples valores" 
+                  matInput 
+                  placeholder="{{ 'inbound.gefRoTurnoHora' | translate  }}" 
+                  readonly>
+              </mat-form-field>
+            </div>
+          </div>
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+              <!-- Gef Ro UO -->
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                  <input
+                    matInput
+                    #gefRoUOInput="ngModel"
+                    [(ngModel)]="inbound.gefRoUO"
+                    [matAutocomplete]="gefRoUOAutocomplete"
+                    placeholder="{{ 'inbound.gefRoUO' | translate }}"
+                    [disabled]="viewing"
+                    (input)="onGefRoUOChanged()"
+                    name="gefRoUO">
+                  <mat-autocomplete
+                    #gefRoUOAutocomplete="matAutocomplete">
+                    <mat-option *ngFor="let uo of filteredGefRoUOList" [value]="uo">
+                      {{ uo }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <!-- Gef Ro Despachante -->
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                  <input
+                    matInput
+                    #gefRoDespachanteInput="ngModel"
+                    [(ngModel)]="inbound.gefRoDespachante"
+                    [matAutocomplete]="gefRoDespachanteAutocomplete"
+                    placeholder="{{ 'inbound.gefRoDespachante' | translate }}"
+                    [disabled]="viewing"
+                    (input)="onGefRoDespachanteChanged()"
+                    name="gefRoDespachante">
+                  <mat-autocomplete
+                    #gefRoDespachanteAutocomplete="matAutocomplete">
+                    <mat-option *ngFor="let despachante of filteredGefRoDespachanteList" [value]="despachante">
+                      {{ despachante }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Gef Ro Terminal -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+              <input
+                matInput
+                #gefRoTerminalInput="ngModel"
+                [(ngModel)]="inbound.gefRoTerminal"
+                [matAutocomplete]="gefRoTerminalAutocomplete"
+                placeholder="{{ 'inbound.gefRoTerminal' | translate }}"
+                [disabled]="viewing"
+                (input)="onGefRoTerminalChanged()"
+                name="gefRoTerminal">
+              <mat-autocomplete
+                #gefRoTerminalAutocomplete="matAutocomplete">
+                <mat-option *ngFor="let terminal of filteredGefRoTerminalList" [value]="terminal">
+                  {{ terminal }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <!-- Gef Ro Tipo Cnt -->
+          <div fxFlex>
+              <mat-form-field fxFlexFill>
+                <input
+                  matInput
+                  #gefRoTipoCntInput="ngModel"
+                  [(ngModel)]="inbound.gefRoTipoCnt"
+                  [matAutocomplete]="gefRoTipoCntAutocomplete"
+                  placeholder="{{ 'inbound.gefRoTipoCnt' | translate }}"
+                  (input)="onGefRoTipoCntChanged()"
+                  [disabled]="viewing"
+                  name="gefRoTipoCnt">
+                <mat-autocomplete
+                  #gefRoTipoCntAutocomplete="matAutocomplete">
+                  <mat-option *ngFor="let tipoCnt of filteredGefRoTipoCntList" [value]="tipoCnt">
+                    {{ tipoCnt }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+        </div>
+        
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Gef Ro Numero Anticipo -->
+          <mat-form-field>
+            <input
+              type="text"
+              [(ngModel)]="inbound.gefRoNumeroAnticipo"
+              matInput
+              placeholder="{{ 'inbound.gefRoNumeroAnticipo' | translate }}"
+              maxlength="8"
+              [disabled]="viewing"
+              name="gefRoNumeroAnticipo" 
+              (keypress)="numberOnly($event)"/>
+          </mat-form-field>
+          <!-- Gef Ro IMO -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.gefRoIMO"
+              matInput
+              placeholder="{{ 'inbound.gefRoIMO' | translate }}"
+              [disabled]="viewing"
+              name="gefRoIMO">
+          </mat-form-field>
+        </div>
+        
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <div fxFlex>
+            <!-- Gef Ro Det Documentos -->
+            <mat-form-field fxFlexFill>
+              <textarea
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="5"
+                matInput
+                #gefRoDetDocumentosInput="ngModel"
+                [(ngModel)]="inbound.gefRoDetDocumentos"
+                name="gefRoDetDocumentos"
+                [disabled]="viewing"
+                placeholder="{{ 'inbound.gefRoDetDocumentos' | translate }}"
+                maxlength="500">
+              </textarea>
+            </mat-form-field>
+          </div>
+          <div fxFlex>
+            <!-- Gef Ro Observaciones -->
+            <mat-form-field fxFlexFill>
+              <textarea
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="5"
+                matInput
+                #gefRoObservacionesInput="ngModel"
+                [(ngModel)]="inbound.gefRoObservaciones"
+                name="gefRoObservaciones"
+                [disabled]="viewing"
+                placeholder="{{ 'inbound.gefRoObservaciones' | translate }}"
+                maxlength="500">
+              </textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Gef Ro Critico Visto -->
+          <div fxFlex fxLayoutAlign="start center">
+            <mat-slide-toggle
+              #comJdCritico="ngModel"
+              [(ngModel)]="inbound.gefRoCriticoVisto"
+              [disabled]="viewing"
+              name="gefRoCriticoVisto"
+              color="accent">
+              {{ 'inbound.gefRoCriticoVisto' | translate }}
+            </mat-slide-toggle>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Usu Ult Act Gefco Ro -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.usuUltActGefcoRo"
+              matInput
+              placeholder="{{ 'inbound.usuUltActGefcoRo' | translate }}"
+              [disabled]="true"
+              name="usuUltActGefcoRo" />
+          </mat-form-field>
+          <!-- Fec Ult Act Gefco Ro -->
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActGefcoRo != multiple" >
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActGefcoRo | date:'dd/MM/yyyy hh:mm:ss'}}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActGefcoRo' | translate }}" 
+                readonly>
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActGefcoRo == multiple" >
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActGefcoRo}}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActGefcoRo' }}" 
+                readonly>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+      
+      <!-- Gestion en puerto/aeropuerto -->
+      <mat-card class="inbound-card" *ngIf="viewing || (gestion.id == 'puertoAeropuerto')">
+        <mat-card-subtitle>{{ 'inbound.title.puertoAeropuerto' | translate }}</mat-card-subtitle>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Gef Eyp Senasa -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.gefEypSenasa"
+              matInput
+              placeholder="{{ 'inbound.gefEypSenasa' | translate }}"
+              [disabled]="viewing"
+              name="gefEypSenasa" />
+          </mat-form-field>
+          <!-- Gef Eyp Tra -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.gefEypTra"
+              matInput
+              placeholder="{{ 'inbound.gefEypTra' | translate }}"
+              [disabled]="viewing"
+              name="gefEypTra" />
+          </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+        <!-- Gef Ro Fecha Traslado IJDA -->
+          <div fxflex fxLayoutAlign="start center" *ngIf="inbound.gefRoFechaTrasladoIjda != multiple">
+            <mat-form-field fxFlexFil>
+              <input
+                #gefRoFechaTrasladoIjdaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.gefRoFechaTrasladoIjda"
+                [matDatepicker]="gefRoFechaTrasladoIjdaPicker"
+                [disabled]="viewing"
+                (click)="gefRoFechaTrasladoIjdaPicker.open()"
+                name="gefRoFechaTrasladoIjda"
+                placeholder="{{ 'inbound.gefRoFechaTrasladoIjda' | translate }}">
+              <mat-error *ngIf="gefRoFechaTrasladoIjdaInput.hasError('required')">
+                {{ 'dato-requerido' | translate }}
+              </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="gefRoFechaTrasladoIjdaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #gefRoFechaTrasladoIjdaPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div *ngIf="inbound.gefRoFechaTrasladoIjda == multiple">
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                <input
+                  matInput
+                  #gefRoFechaTrasladoIjdaInput="ngModel"
+                  [(ngModel)]="inbound.gefRoFechaTrasladoIjda"
+                  placeholder="{{ 'inbound.gefRoFechaTrasladoIjda' | translate }}"
+                  [disabled]="true"
+                  name="gefRoFechaTrasladoIjda">
+              </mat-form-field>
+              </div>
+              <fa-icon
+                  [icon]="['fas', 'pen']"
+                  [fixedWidth]="true"
+                  (click)="onEditRow('gefRoFechaTrasladoIjda')"
+                  title="{{ 'editar' | translate }}"
+                  class="cursor-pointer">
+                </fa-icon>
+            </div> 
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Usu Ult Act Eyp -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.usuUltActEyp"
+              matInput
+              placeholder="{{ 'inbound.usuUltActEyp' | translate }}"
+              [disabled]="true"
+              name="usuUltActEyp" />
+          </mat-form-field>
+          <!-- Fec Ult Act Eyp -->
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActEyp != multiple" >
+            <mat-form-field fxFlexFill>
+                <input 
+                value="{{inbound.fecUltActEyp | date:'dd/MM/yyyy hh:mm:ss'}}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActEyp' | translate }}" 
+                readonly>
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActEyp == multiple" >
+            <mat-form-field fxFlexFill>
+                <input 
+                value="{{inbound.fecUltActEyp }}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActEyp' | translate }}" 
+                readonly>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Gestion Gefco en IJDA -->
+      <mat-card class="inbound-card" *ngIf="viewing || (gestion.id == 'gefcoIjda')">
+        <mat-card-subtitle>{{ 'inbound.title.gefcoIjda' | translate }}</mat-card-subtitle>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Gef Jd Promesa Arribo A Planta -->
+        <!--   <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFil>
+              <input
+                #gefJdPromesaArriboAPlantaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.gefJdPromesaArriboAPlanta"
+                [matDatepicker]="gefJdPromesaArriboAPlantaPicker"
+                [disabled]="viewing"
+                (click)="gefJdPromesaArriboAPlantaPicker.open()"
+                name="gefJdPromesaArriboAPlanta"
+                placeholder="{{ 'inbound.gefJdPromesaArriboAPlanta' | translate }}">
+              <mat-error *ngIf="gefJdPromesaArriboAPlantaInput.hasError('required')">
+                {{ 'dato-requerido' | translate }}
+              </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="gefJdPromesaArriboAPlantaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #gefJdPromesaArriboAPlantaPicker></mat-datepicker>
+            </mat-form-field>
+          </div> -->
+          <!-- Gef Jd Arribo A Planta -->
+          <div fxflex fxLayoutAlign="start center" *ngIf="inbound.gefJdArriboAPlanta != multiple">
+            <mat-form-field fxFlexFil>
+              <input
+                #gefJdArriboAPlantaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.gefJdArriboAPlanta"
+                [matDatepicker]="gefJdArriboAPlantaPicker"
+                [disabled]="viewing"
+                (click)="gefJdArriboAPlantaPicker.open()"
+                name="gefJdArriboAPlanta"
+                placeholder="{{ 'inbound.gefJdArriboAPlanta' | translate }}">
+              <mat-error *ngIf="gefJdArriboAPlantaInput.hasError('required')">
+                {{ 'dato-requerido' | translate }}
+              </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="gefJdArriboAPlantaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #gefJdArriboAPlantaPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div *ngIf="inbound.gefJdArriboAPlanta == multiple">
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                <input
+                  matInput
+                  #gefJdArriboAPlantaInput="ngModel"
+                  [(ngModel)]="inbound.gefJdArriboAPlanta"
+                  placeholder="{{ 'inbound.gefJdArriboAPlanta' | translate }}"
+                  [disabled]="true"
+                  name="gefJdArriboAPlanta">
+              </mat-form-field>
+              </div>
+              <fa-icon
+                  [icon]="['fas', 'pen']"
+                  [fixedWidth]="true"
+                  (click)="onEditRow('gefJdArriboAPlanta')"
+                  title="{{ 'editar' | translate }}"
+                  class="cursor-pointer">
+                </fa-icon>
+            </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Usu Ult Act Gefco Jd -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.usuUltActGefcoJd"
+              matInput
+              placeholder="{{ 'inbound.usuUltActGefcoJd' | translate }}"
+              [disabled]="true"
+              name="usuUltActGefcoJd" />
+          </mat-form-field>
+          <!-- Fec Ult Act Gefco Jd -->
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActGefcoJd != multiple">
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActGefcoJd | date:'dd/MM/yyyy hh:mm:ss'}}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActGefcoJd' | translate }}" 
+                [disabled]="true">
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActGefcoJd == multiple">
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActGefcoJd }}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActGefcoJd' | translate }}" 
+                [disabled]="true">
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+        <!-- Entrega Ok no OK -->
+          <div fxFlex fxLayoutAlign="start center">
+            <mat-form-field fxFlexFill>
+              <mat-select
+              #gefRoEntregaOk="ngModel"
+                  [(ngModel)]="inbound.gefRoEntregaOk"
+                  name="gefRoEntregaOk"
+                  placeholder="{{ 'entrega-ok' | translate }}"
+                  [disabled]="viewing" >
+                  <ng-container *ngFor="let opt of okCombo">
+                    <mat-option
+                      [value]="opt.value">
+                      {{ opt.option }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+          </div>
+          <div fxFlex fxLayoutAlign="start center">
+            <mat-slide-toggle
+              #comJdCritico="ngModel"
+              [(ngModel)]="inbound.activo"
+              name="activo"
+              color="accent"
+              [disabled]="viewing">
+              {{ 'inbound.activo' | translate }}
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </mat-card>
+
+     
+
+      <!-- Gestion Despachantes -->
+      <mat-card class="inbound-card" *ngIf="viewing || (gestion.id == 'despachantes')">
+        <mat-card-subtitle>{{ 'inbound.title.despachantes' | translate }}</mat-card-subtitle>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Desp Status Liberacion -->
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+              <mat-select
+                #despStatusLiberacion="ngModel"
+                [(ngModel)]="inbound.despStatusLiberacion"
+                [disabled]="viewing"
+                name="despStatusLiberacion"
+                placeholder="{{ 'inbound.despStatusLiberacion' | translate }}">
+                <mat-option></mat-option>
+                <mat-option value="OK">{{ 'OK' }}</mat-option>
+                <mat-option value="NO-OK">{{ 'NO OK' }}</mat-option>
+                <mat-option value="LIB-PARCIAL">{{ 'LIBERADO PARCIAL' }}</mat-option>
+                <mat-option value="LIBERADO">{{ 'LIBERADO' }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center"  *ngIf="inbound.histEstadosLiberacion.length > 0" >
+            <button pButton type="button" title="Historico Estados de Liberación" label="{{ inbound.histEstadosLiberacion.length }}"
+              class="ui-button-raised ui-button-rounded" [ngClass]="{'ui-button-warning': inbound.histEstadosLiberacion.length > 1}"
+              (click)="showDialogEstLiberacion()" [disabled]="inbound.histEstadosLiberacion.length == 1">
+            </button>
+          </div>
+
+          <!-- descripcion observacion-->
+          <div fxFlex>
+                <mat-form-field fxFlexFill>
+                  <input
+                    matInput
+                    #gefRoUOInput="ngModel"
+                    [(ngModel)]="inbound.desObservEstadoLiber"
+                    placeholder="{{ 'inbound.desObservEstadoLiber' | translate }}"
+                    [disabled]="viewing"
+                    name="desObservEstadoLiber"
+                    maxlength="1000">
+                </mat-form-field>
+              </div>
+          <!-- Desp Promesa Liberacion -->
+          <div fxflex fxLayoutAlign="start center" *ngIf="inbound.despPromesaLiberacion != multiple">
+            <mat-form-field fxFlexFil>
+              <input
+                #despPromesaLiberacionInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.despPromesaLiberacion"
+                [matDatepicker]="despPromesaLiberacionPicker"
+                [disabled]="viewing"
+                (click)="despPromesaLiberacionPicker.open()"
+                name="despPromesaLiberacion"
+                placeholder="{{ 'inbound.despPromesaLiberacion' | translate }}">
+              <mat-error *ngIf="despPromesaLiberacionInput.hasError('required')">
+                {{ 'dato-requerido' | translate }}
+              </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="despPromesaLiberacionPicker"></mat-datepicker-toggle>
+              <mat-datepicker #despPromesaLiberacionPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div *ngIf="inbound.despPromesaLiberacion == multiple">
+            <div fxFlex>
+              <mat-form-field fxFlexFill>
+              <input
+                matInput
+                #despPromesaLiberacionInput="ngModel"
+                [(ngModel)]="inbound.despPromesaLiberacion"
+                placeholder="{{ 'inbound.despPromesaLiberacion' | translate }}"
+                [disabled]="true"
+                name="despPromesaLiberacion">
+            </mat-form-field>
+            </div>
+            <fa-icon
+                [icon]="['fas', 'pen']"
+                [fixedWidth]="true"
+                (click)="onEditRow('despPromesaLiberacion')"
+                title="{{ 'editar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+          </div>
+         
+          <!-- Desp Liberacion -->
+          <div fxflex fxLayoutAlign="start center" *ngIf="inbound.despLiberacion != multiple">
+            <mat-form-field fxFlexFil>
+              <input
+                #despLiberacionInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.despLiberacion"
+                [matDatepicker]="despLiberacionPicker"
+                [disabled]="viewing"
+                (click)="despLiberacionPicker.open()"
+                name="despLiberacion"
+                placeholder="{{ 'inbound.despLiberacion' | translate }}">
+              <mat-error *ngIf="despLiberacionInput.hasError('required')">
+                {{ 'dato-requerido' | translate }}
+              </mat-error>
+              <mat-datepicker-toggle matSuffix [for]="despLiberacionPicker"></mat-datepicker-toggle>
+              <mat-datepicker #despLiberacionPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <div *ngIf="inbound.despLiberacion == multiple">
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                <input
+                  matInput
+                  #despLiberacionInput="ngModel"
+                  [(ngModel)]="inbound.despLiberacion"
+                  placeholder="{{ 'inbound.despLiberacion' | translate }}"
+                  [disabled]="true"
+                  name="despLiberacion">
+              </mat-form-field>
+              </div>
+              <fa-icon
+                  [icon]="['fas', 'pen']"
+                  [fixedWidth]="true"
+                  (click)="onEditRow('despLiberacion')"
+                  title="{{ 'editar' | translate }}"
+                  class="cursor-pointer">
+                </fa-icon>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Usu Ult Act Depac Jd -->
+          <mat-form-field>
+            <input
+              [(ngModel)]="inbound.usuUltActDepacJd"
+              matInput
+              placeholder="{{ 'inbound.usuUltActDepacJd' | translate }}"
+              [disabled]="true"
+              name="usuUltActDepacJd" />
+          </mat-form-field>
+          <!-- Fec Ult Act Depac Jd -->
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActDepacJd != multiple">
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActDepacJd | date:'dd/MM/yyyy hh:mm:ss'}}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActDepacJd' | translate }}" 
+                [disabled]="true">
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActDepacJd == multiple">
+            <mat-form-field fxFlexFil>
+              <input 
+                value="{{inbound.fecUltActDepacJd }}" 
+                matInput 
+                placeholder="{{ 'inbound.fecUltActDepacJd' | translate }}" 
+                [disabled]="true">
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Gestion en Almacen/Repuestos IJDA -->
+      <mat-card class="inbound-card" *ngIf="viewing || (gestion.id == 'almacenRepuestosIjda')">
+          <mat-card-subtitle>{{ 'inbound.title.almacenRepuestosIjda' | translate }}</mat-card-subtitle>
+          <!--Fecha de solicitud de descarga-->
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+            <mat-form-field fxFlexFil>
+                <input
+                  #almJdFechaSolicDescarga = "ngModel"
+                  matInput [min]="minDate"
+                  [(ngModel)]="inbound.almJdFechaSolicDescarga"
+                  [matDatepicker]="almJdFechaSolicDescargaPicker"
+                  [disabled]="viewing || inbound.almJdOkDescarga != null"
+                  (click)="almJdFechaSolicDescargaPicker.open()"
+                  name="almJdFechaSolicDescarga"
+                  [required]="true"
+                  placeholder="{{ 'inbound.almJdFechaSolicDescarga' | translate }}">
+                <mat-error *ngIf="almJdFechaSolicDescarga.hasError('required')">
+                  {{ 'dato-requerido' | translate }}
+                </mat-error>
+                <mat-datepicker-toggle matSuffix [for]="almJdFechaSolicDescargaPicker"></mat-datepicker-toggle>
+                <mat-datepicker #almJdFechaSolicDescargaPicker></mat-datepicker>
+              </mat-form-field>
+        
+        <!--Hora de solicitud de descarga-->
+          <p-calendar timeOnly="true" [(ngModel)]="inbound.almJdHoraSolicDescarga"   name="almJdHoraSolicDescarga" *ngIf= "inbound.almJdHoraSolicDescarga != 'Invalid Date'" 
+            required=true placeholder="{{ 'inbound.almJdHoraSolicDescarga' | translate }}" [disabled]="viewing || inbound.almJdOkDescarga != null"
+            #almJdHoraSolicDescarga = "ngModel">
+        </p-calendar>
+         <!--Hora de solicitud de descarga-->
+         <div *ngIf="inbound.almJdHoraSolicDescarga == 'Invalid Date'">
+          <div fxFlex>
+            <mat-form-field fxFlexFill>
+            <input
+              matInput
+              #almJdHoraSolicDescargaInput="ngModel"
+              [(ngModel)]="multiple"
+              placeholder="{{ 'inbound.almJdHoraSolicDescarga' | translate }}"
+              [disabled]="true"
+              name="a">
+          </mat-form-field>
+          </div>
+          <fa-icon
+              [icon]="['fas', 'pen']"
+              [fixedWidth]="true"
+              (click)="onEditRow('almJdHoraSolicDescarga')"
+              title="{{ 'editar' | translate }}"
+              class="cursor-pointer">
+            </fa-icon>
+        </div>
+        <!--Combo proveedor-->
+        <div fxFlex fxLayoutAlign="start center">
+          <mat-form-field fxFlexFill>
+            <mat-select
+            required=true
+            #almJdLugarSolicDescarga="ngModel"
+                [(ngModel)]="inbound.almJdLugarSolicDescarga"
+                name="almJdLugarSolicDescarga"
+                placeholder="{{ 'inbound.almJdLugarSolicDescarga' | translate}}"
+                [disabled]="viewing || inbound.almJdOkDescarga != null" >
+                <ng-container *ngFor="let opt of comboProveedores">
+                  <mat-option
+                    [value]="opt.value">
+                    {{ opt.option }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayoutAlign="start center">
+          <p-triStateCheckbox *ngIf="showConfirmarEntrega" (ngModelChange)="copyValues($event)" 
+            [(ngModel)]="inbound.almJdOkDescarga" name="almJdOkDescarga" label="Confirmación Ingreso" [disabled]="viewing">
+          </p-triStateCheckbox>
+        </div>
+      </div>
+      <div fxLayout="row wrap" fxLayoutGap="2rem" *ngIf="inbound.almJdOkDescarga != null && !inbound.almJdOkDescarga">
+          <!-- fecha descarga-->
+          <div fxLayout="row wrap" fxLayoutGap="2rem" *ngIf="inbound.gefJdFechaDeDescarga != multiple">
+            <mat-form-field fxFlexFil>
+                <input
+                  #gefJdFechaDeDescarga = "ngModel"
+                  matInput
+                  [(ngModel)]="inbound.gefJdFechaDeDescarga"
+                  [matDatepicker]="gefJdFechaDeDescargaPicker"
+                  [disabled]="viewing"
+                  (click)="gefJdFechaDeDescargaPicker.open()"
+                  name="gefJdFechaDeDescarga"
+                  placeholder="{{ 'inbound.gefJdFechaDeDescarga' | translate }}">
+                  <mat-error *ngIf="gefJdFechaDeDescarga.hasError('required')">
+                    {{ 'dato-requerido' | translate }}
+                  </mat-error>
+                  <mat-datepicker-toggle matSuffix [for]="gefJdFechaDeDescargaPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #gefJdFechaDeDescargaPicker></mat-datepicker>
+                  </mat-form-field>
+          </div>
+          <div *ngIf="inbound.gefJdFechaDeDescarga == multiple">
+            <div fxFlex>
+              <mat-form-field fxFlexFill>
+              <input
+                matInput
+                #gefJdFechaDeDescargaInput="ngModel"
+                [(ngModel)]="inbound.gefJdFechaDeDescarga"
+                placeholder="{{ 'inbound.gefJdFechaDeDescarga' | translate }}"
+                [disabled]="true"
+                name="gefJdFechaDeDescarga">
+              </mat-form-field>
+            </div>
+            <fa-icon
+              [icon]="['fas', 'pen']"
+              [fixedWidth]="true"
+              (click)="onEditRow('gefJdFechaDeDescarga')"
+              title="{{ 'editar' | translate }}"
+              class="cursor-pointer">
+            </fa-icon>
+          </div>
+          <!-- horario descarga-->
+          <p-calendar timeOnly="true" [(ngModel)]="inbound.almJdHorarioDeDescarga"   name="almJdHorarioDeDescarga" *ngIf= "inbound.almJdHorarioDeDescarga != 'Invalid Date'" 
+              required=true placeholder="{{ 'inbound.almJdHorarioDeDescarga' | translate }}" [disabled]="viewing"
+              #almJdHoraSolicDescarga = "ngModel">
+          </p-calendar>
+          <!-- horario descarga multiple-->
+          <div *ngIf="inbound.almJdHorarioDeDescarga == 'Invalid Date'">
+            <div fxFlex>
+              <mat-form-field fxFlexFill>
+              <input
+                matInput
+                #almJdHorarioDeDescargaInput="ngModel"
+                [(ngModel)]="multiple"
+                placeholder="{{ 'inbound.almJdHorarioDeDescarga' | translate }}"
+                [disabled]="true"
+                name="a">
+            </mat-form-field>
+            </div>
+            <fa-icon
+                [icon]="['fas', 'pen']"
+                [fixedWidth]="true"
+                (click)="onEditRow('almJdHorarioDeDescarga')"
+                title="{{ 'editar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+          </div>
+          <!--Combo proveedor-->
+        <div fxFlex fxLayoutAlign="start center">
+          <mat-form-field fxFlexFill>
+            <mat-select
+            required=true
+            #almJdLugarDescarga="ngModel"
+                [(ngModel)]="inbound.almJdLugarDescarga"
+                name="almJdLugarDescarga"
+                placeholder="{{ 'inbound.almJdLugarDescarga' | translate}}"
+                [disabled]="viewing" >
+                <ng-container *ngFor="let opt of comboProveedores">
+                  <mat-option
+                    [value]="opt.value">
+                    {{ opt.option }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayoutAlign="start center"></div>
+      </div>
+      <!-- Observacioines confirmacion entrega -->
+      <mat-form-field fxFlexFill>
+        <textarea
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="1"
+          cdkAutosizeMaxRows="5"
+          matInput
+          #gefRoDetDocumentosInput="ngModel"
+          [(ngModel)]="inbound.almJdObservaciones"
+          name="almJdObservaciones"
+          [disabled]="viewing"
+          placeholder="{{ 'inbound.almJdObservaciones' | translate }}"
+          maxlength="3000">
+        </textarea>
+      </mat-form-field>
+          <div fxLayout="row wrap" fxLayoutGap="2rem">
+            <!-- Usu Ult Act Fecha de Descarga -->
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.usuUltActAlreJd"
+                matInput
+                placeholder="{{ 'inbound.usuUltActAlreJd' | translate }}"
+                [disabled]="true"
+                name="usuUltActAlreJd" />
+            </mat-form-field>
+            <!-- Fec Ult Act Fecha de Descarga -->
+            <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActAlreJd != multiple" >
+              <mat-form-field fxFlexFill>
+                  <input 
+                  value="{{inbound.fecUltActAlreJd | date:'dd/MM/yyyy hh:mm:ss'}}" 
+                  matInput 
+                  placeholder="{{ 'inbound.fecUltActAlreJd' | translate }}" 
+                  readonly>
+              </mat-form-field>
+            </div>
+            <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActAlreJd == multiple" >
+              <mat-form-field fxFlexFill>
+                  <input 
+                  value="{{inbound.fecUltActAlreJd }}" 
+                  matInput 
+                  placeholder="{{ 'inbound.fecUltActAlreJd' | translate }}" 
+                  readonly>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card>
+
+      <!-- Campos Extra view -->
+      <mat-card class="inbound-card" *ngIf="viewing">
+        <mat-card-subtitle>{{ 'inbound.title.adicionales' | translate }}</mat-card-subtitle>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Id -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.id"
+                matInput
+                placeholder="{{ 'inbound.id' | translate }}"
+                [disabled]="true"
+                name="id" />
+            </mat-form-field>
+          </div>
+          <!-- Booking -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.booking"
+                matInput
+                placeholder="{{ 'inbound.booking' | translate }}"
+                [disabled]="true"
+                name="booking" />
+            </mat-form-field>
+          </div>
+          <!-- Canal Selectividad -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.canalSelectividad"
+                matInput
+                placeholder="{{ 'inbound.canalSelectividad' | translate }}"
+                [disabled]="true"
+                name="canalSelectividad" />
+            </mat-form-field>
+          </div>
+          <!-- Medio de Transporte -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.medioDeTransporte"
+                matInput
+                placeholder="{{ 'inbound.medioDeTransporte' | translate }}"
+                [disabled]="true"
+                name="medioDeTransporte" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Numero PO -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.numeroPo"
+                matInput
+                placeholder="{{ 'inbound.numeroPo' | translate }}"
+                [disabled]="true"
+                name="numeroPo" />
+            </mat-form-field>
+          </div>
+          <!-- Numero Seal -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.numeroSeal"
+                matInput
+                placeholder="{{ 'inbound.numeroSeal' | translate }}"
+                [disabled]="true"
+                name="numeroSeal" />
+            </mat-form-field>
+          </div>
+          <!-- Numero Viaje -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.numeroViaje"
+                matInput
+                placeholder="{{ 'inbound.numeroViaje' | translate }}"
+                [disabled]="true"
+                name="numeroViaje" />
+            </mat-form-field>
+          </div>
+          <!-- Pais Origen -->
+        <!--  <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.paisOrigen"
+                matInput
+                placeholder="{{ 'inbound.paisOrigen' | translate }}"
+                [disabled]="true"
+                name="paisOrigen" />
+            </mat-form-field>
+          </div> -->
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Placa Semi -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.placaSemi"
+                matInput
+                placeholder="{{ 'inbound.placaSemi' | translate }}"
+                [disabled]="true"
+                name="placaSemi" />
+            </mat-form-field>
+          </div>
+          <!-- Placa Tractor -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.placaTractor"
+                matInput
+                placeholder="{{ 'inbound.placaTractor' | translate }}"
+                [disabled]="true"
+                name="placaTractor" />
+            </mat-form-field>
+          </div>
+          <!-- Prf No -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.prfNo"
+                matInput
+                placeholder="{{ 'inbound.prfNo' | translate }}"
+                [disabled]="true"
+                name="prfNo" />
+            </mat-form-field>
+          </div>
+          <!-- Puerto Carga -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.puertoCarga"
+                matInput
+                placeholder="{{ 'inbound.puertoCarga' | translate }}"
+                [disabled]="true"
+                name="puertoCarga" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Usu Ult Act Transito -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.usuUltActTransito"
+                matInput
+                placeholder="{{ 'inbound.usuUltActTransito' | translate }}"
+                [disabled]="true"
+                name="usuUltActTransito" />
+            </mat-form-field>
+          </div>
+          <!-- Week Eta -->
+          <div fxFlex>
+            <mat-form-field>
+              <input
+                [(ngModel)]="inbound.weekEta"
+                matInput
+                placeholder="{{ 'inbound.weekEta' | translate }}"
+                [disabled]="true"
+                name="weekEta" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Date Etd -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateEtdInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateEtd"
+                [matDatepicker]="dateEtdPicker"
+                [disabled]="true"
+                name="dateEtd"
+                placeholder="{{ 'inbound.dateEtd' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateEtdPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateEtdPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Date Factura -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateFacturaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateFactura"
+                [matDatepicker]="dateFacturaPicker"
+                [disabled]="true"
+                name="dateFactura"
+                placeholder="{{ 'inbound.dateFactura' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateFacturaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateFacturaPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Date Ingreso a Terminal -->
+        <!--  <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateIngresoATerminalInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateIngresoATerminal"
+                [matDatepicker]="dateIngresoATerminalPicker"
+                [disabled]="true"
+                name="dateIngresoATerminal"
+                placeholder="{{ 'inbound.dateIngresoATerminal' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateIngresoATerminalPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateIngresoATerminalPicker></mat-datepicker>
+            </mat-form-field>
+          </div>-->
+          <!-- Date Liberacion en Frontera -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateLiberacionEnFronteraInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateLiberacionEnFrontera"
+                [matDatepicker]="dateLiberacionEnFronteraPicker"
+                [disabled]="true"
+                name="dateLiberacionEnFrontera"
+                placeholder="{{ 'inbound.dateLiberacionEnFrontera' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateLiberacionEnFronteraPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateLiberacionEnFronteraPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Date Llegada Frontera -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateLlegadaFronteraInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateLlegadaFrontera"
+                [matDatepicker]="dateLlegadaFronteraPicker"
+                [disabled]="true"
+                name="dateLlegadaFrontera"
+                placeholder="{{ 'inbound.dateLlegadaFrontera' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateLlegadaFronteraPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateLlegadaFronteraPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Date Pde -->
+        <!--  <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #datePdeInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.datePde"
+                [matDatepicker]="datePdePicker"
+                [disabled]="true"
+                name="datePde"
+                placeholder="{{ 'inbound.datePde' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="datePdePicker"></mat-datepicker-toggle>
+              <mat-datepicker #datePdePicker></mat-datepicker>
+            </mat-form-field>
+          </div> -->
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- Date Pick Up Entrega -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #datePickUpEntregaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.datePickUpEntrega"
+                [matDatepicker]="datePickUpEntregaPicker"
+                [disabled]="true"
+                name="datePickUpEntrega"
+                placeholder="{{ 'inbound.datePickUpEntrega' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="datePickUpEntregaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #datePickUpEntregaPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Date Rta -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateRtaInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateRta"
+                [matDatepicker]="dateRtaPicker"
+                [disabled]="true"
+                name="dateRta"
+                placeholder="{{ 'inbound.dateRta' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateRtaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateRtaPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Date Rtd -->
+          <div fxflex fxLayoutAlign="start center" >
+            <mat-form-field fxFlexFill>
+              <input
+                #dateRtdInput = "ngModel"
+                matInput
+                [(ngModel)]="inbound.dateRtd"
+                [matDatepicker]="dateRtdPicker"
+                [disabled]="true"
+                name="dateRtd"
+                placeholder="{{ 'inbound.dateRtd' | translate }}">
+              <mat-datepicker-toggle matSuffix [for]="dateRtdPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dateRtdPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          <!-- Fec Ult Act Transito -->
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActTransito != multiple">
+            <mat-form-field fxFlexFill>
+                <input 
+                  value="{{inbound.fecUltActTransito | date:'dd/MM/yyyy'}}" 
+                  matInput 
+                  placeholder="{{ 'inbound.fecUltActTransito' | translate }}" 
+                  [disabled]="true">
+            </mat-form-field>
+          </div>
+          <div fxflex fxLayoutAlign="start center" *ngIf= "inbound.fecUltActTransito == multiple">
+            <mat-form-field fxFlexFill>
+                <input 
+                  value="{{inbound.fecUltActTransito}}" 
+                  matInput 
+                  placeholder="{{ 'inbound.fecUltActTransito' | translate }}" 
+                  [disabled]="true">
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="2rem">
+          <!-- peso terrestre -->
+           <div fxFlex>
+                       <mat-form-field>
+                         <input
+                           [(ngModel)]="inbound.pesoTerrestre"
+                           matInput
+                           placeholder="{{ 'inbound.pesoTerrestre' | translate }}"
+                           [disabled]="true"
+                           name="pesoTerrestre" />
+                       </mat-form-field>
+            </div>
+            <!-- SO -->
+           <div fxFlex>
+                       <mat-form-field>
+                         <input
+                           [(ngModel)]="inbound.so"
+                           matInput
+                           placeholder="{{ 'inbound.so' | translate }}"
+                           [disabled]="true"
+                           name="so" />
+                       </mat-form-field>
+            </div>
+             <!-- RORO roroSerialNumber -->
+           <div fxFlex>
+                       <mat-form-field>
+                         <input
+                           [(ngModel)]="inbound.roroSerialNumber"
+                           matInput
+                           placeholder="{{ 'inbound.roroSerialNumber' | translate }}"
+                           [disabled]="true"
+                           name="roroSerialNumber" />
+                       </mat-form-field>
+            </div>
+            <div fxFlex></div>
+         </div>
+      </mat-card>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <div fxLayout="row wrap" fxLayoutGap="1rem" class="mt-2 mb-2">
+        <!-- Boton GUARDAR (Modificando) -->
+        <button
+          *ngIf="!viewing && inbound.id"
+          mat-raised-button
+          [disabled]="form.invalid"
+          (click)="gestion.id != 'almacenRepuestosIjda'? updateInbound() : updateInboundAlmacen() "
+          color="primary">
+          {{ 'guardar' | translate }}
+        </button>
+        <!-- Boton VOLVER -->
+        <button
+          mat-raised-button
+          (click)="onBackClicked()"
+          type="button"
+          color="basic">
+          {{ 'volver' | translate }}
+        </button>
+      </div>
+    </mat-dialog-actions>
+  </form>
+  <p-confirmDialog header="Advertencia" icon="pi pi-exclamation-triangle" appendTo="body" acceptLabel="Editar"
+  rejectLabel="No editar" *ngIf="!viewing && gestion.id != 'almacenRepuestosIjda'"></p-confirmDialog>
+  <p-confirmDialog header="Advertencia" icon="pi pi-exclamation-triangle" appendTo="body" acceptLabel="Aceptar"
+  rejectLabel="No Aceptar" *ngIf="!viewing && gestion.id == 'almacenRepuestosIjda'"></p-confirmDialog>
+</div>
+<p-dialog header="Histórico de cambio de ETA" [(visible)]="showDialogEta" width="800">
+  <p-table [value]="cambioEtaTable">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ETA</th>
+            <th>Diferencia en días</th>
+            <th>fecha última Actualización</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-car>
+        <tr>
+            <td>{{car.eta| date:'dd/MM/yyyy'}}</td>
+            <td>{{car.difDias}}</td>
+            <td>{{car.fecUltAct | date:'dd/MM/yyyy'}}</td>
+        </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Histórico de Estado de Liberación" [(visible)]="showDialogEstadoLiberacion" width="1200">
+  <p-table [value]="historicoEstadoLiberacionTable"  [scrollable]="true" scrollHeight="500px">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Estado</th>
+            <th>Observación</th>
+            <th>fecha de Registro</th>
+            <th>Usuario</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-car>
+        <tr>
+            <td>{{car.estadoLiber}}</td>
+            <td>{{car.observacion}}</td>
+            <td>{{car.fecUltAct | date:'dd/MM/yyyy'}}</td>
+            <td>{{car.usuUltAct.nombre + ' ' + car.usuUltAct.apellido}}</td>
+        </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<p-dialog header="Confirmación de Solicitud de descarga" [(visible)]="showDialogSolicitudDescarga" width="1200">
+  <p-table [value]="histDescargaTable"  [scrollable]="true" scrollHeight="500px">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Fecha Descarga</th>
+            <th>Horario Descarga</th>
+            <th>Lugar Descarga</th>
+            <th>Entrega</th>
+            <th>Observacion</th>
+            <th>Fec. Ult. Act.</th>
+            <th>Usu. Ult. Act.</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-cambio>
+        <tr>
+            <td>{{cambio.fechaDescarga | date:'dd/MM/yyyy'}}</td>
+            <td>{{cambio.horaDescarga | date:'HH:mm'}}</td>
+            <td>{{cambio.lugarDescarga}}</td>
+            <td>{{cambio.okDescarga == null? 'Solicitud' : cambio.okDescarga?'Ok' : 'No ok'}}</td>
+            <td>{{cambio.almObservSolicDescarga}}</td>
+            <td>{{cambio.fecUltAct | date:'dd/MM/yyyy'}}</td>
+            <td>{{cambio.usuUltAct.fullName}}</td>
+        </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

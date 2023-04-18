@@ -1,0 +1,66 @@
+<div id="permisos-rol">
+  <ng-container *ngIf="rol">
+    <div fxLayout="row wrap" fxLayoutGap="2rem">
+      <div fxFlex>
+        <mat-form-field fxFlexFill>
+          <input
+            matInput
+            [(ngModel)]="rol.id"
+            name="id"
+            placeholder="{{ 'codigo' | translate }}"
+            disabled>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlexFill>
+          <input
+            matInput
+            [(ngModel)]="rol.descripcion"
+            name="descripcion"
+            placeholder="{{ 'descripcion' | translate }}"
+            disabled>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="2rem">
+      <div fxFlex>
+        <mat-form-field fxFlexFill>
+          <mat-select
+            [(ngModel)]="sistema"
+            [disabled]="viewing"
+            (selectionChange)="onSistemaChanged()"
+            name="sistema"
+            placeholder="{{ 'sistema' | translate }}"
+            required>
+            <mat-option *ngFor="let sistema of sistemas" [value]="sistema">
+              {{ sistema.getFullDescription() }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </ng-container>
+  <div fxLayout="row wrap" fxLayoutGap="2rem">
+    <div fxFlexFill>
+      <p-tree
+        [(selection)]="funcionesSeleccionadas"
+        [value]="funcionesBasicas"
+        [propagateSelectionUp]="true"
+        [metaKeySelection]="true"
+        selectionMode="checkbox"
+        emptyMessage ="{{ 'seleccione-rol-sistema' | translate }}">
+      </p-tree>
+    </div>
+  </div>
+  <div *ngIf="rol" fxLayout="row wrap" fxLayoutGap="2rem" class="mt-2">
+    <div fxFlex>
+      <a
+        mat-raised-button
+        [disabled]="!sistema"
+        (click)="saveFunciones()"
+        color="primary">
+        {{ 'guardar' | translate }}
+      </a>
+    </div>
+  </div>
+</div>

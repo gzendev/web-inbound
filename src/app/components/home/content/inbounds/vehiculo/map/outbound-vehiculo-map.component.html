@@ -1,0 +1,68 @@
+<div *ngIf="loading" fxLayoutAlign="center center">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!loading" fxLayout="column" fxLayoutGap="2rem" fxFill>
+    <div fxFlex="0 0 auto" fxHide.xs>
+        <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+    </div>
+    <div fxLayout="row" fxLayoutGap="50px" fxFill>
+        <div flexLayout="column wrap" fxLayoutGap="20px" fxFlex="25">
+            <mat-form-field>
+                <mat-label>Vin</mat-label>
+                <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.vin" disabled>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Hoja de Ruta</mat-label>
+                <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.hojaRuta" disabled>
+            </mat-form-field>
+            <div fxLayout="row" fxLayoutGap="20px">
+                <div fxLayout="column">
+                    <mat-form-field>
+                        <mat-label>Tractor</mat-label>
+                        <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.tractor" disabled>
+                    </mat-form-field>
+                </div>
+                <div fxLayout="column">
+                    <mat-form-field>
+                        <mat-label>Remolque</mat-label>
+                        <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.remolque" disabled>
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-form-field>
+                <mat-label>Chofer</mat-label>
+                <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.chofer" disabled>
+            </mat-form-field>
+            <mat-card class="mat-elevation-z0" class="left-card-container">
+                <mat-card-content class="left-card-container">
+                    <mat-label>{{ 'vines-de-la-hoja-de-ruta' | translate }}</mat-label>
+                    <mat-selection-list class="left-card-container">
+                        <mat-list-item *ngFor="let detalle of mapa.detalles" class="item-detalle">
+                            <h3 matLine class="vin-detalle"> {{detalle.split('|')[0]}} </h3>
+                            <p class="descripcion-detalle" matLine> {{detalle.split('|')[1]}}</p>
+                            <p class="fecha-detalle" matLine> {{detalle.split('|')[2]}}</p>
+                        </mat-list-item>
+                    </mat-selection-list>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div flexLayout="column" fxFlex class="mapa-container">
+            <div *ngIf="mapa.url === ''"> 
+                {{ 'vin-sin-ubicacion' | translate }}
+            </div>
+            <div class="head-mapa" *ngIf="mapa.url != ''">
+                <mat-form-field>
+                    <mat-label>Ubicacion</mat-label>
+                    <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.coordenadas" disabled>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Ultima Lectura</mat-label>
+                    <input matInput placeholder="Ex. Pizza" [(ngModel)]="mapa.ultimaLectura" disabled>
+                </mat-form-field>
+            </div>
+            <div fxFill class="map-container">
+                <iframe *ngIf="mapa.url != ''" [src]="urlSafe" scrolling="no"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

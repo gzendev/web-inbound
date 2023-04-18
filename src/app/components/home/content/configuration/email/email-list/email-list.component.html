@@ -1,0 +1,64 @@
+<div fxLayout="column">
+  <div>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        placeholder="alguien@example.com"
+        [(ngModel)]="currentEmail"
+        [disabled]="disabled"
+        #emailInput="ngModel"
+        email
+        required
+        [pattern]="emailPattern"
+      />
+      <button mat-button *ngIf="isEdit == false && currentEmail" matSuffix mat-icon-button aria-label="Clear" (click)="currentEmail=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <button
+    *ngIf="!isEdit"
+      mat-raised-button
+      color="primary"
+      (click)="agregar()"
+      [disabled]="emailInput.invalid ||(!isEdit && currentEmail == '')"
+      class="button-action"
+    >
+      Agregar
+    </button>
+    <button *ngIf="isEdit"
+      mat-raised-button
+      color="primary"
+      (click)="editar()"
+      class="button-action"
+      [disabled]="emailInput.invalid"
+    >
+      Editar
+    </button>
+  </div>
+  <div>
+    <div *ngFor="let item of emails; index as index">
+      <div *ngIf="item !== ''" fxLayout="row" fxLayoutAlign="end">
+        <div class="email-item">{{ item }}</div>
+        <div>
+          <button
+            class="button-reduced"
+            mat-icon-button
+            aria-label="Editar"
+            (click)="actionEditar(item)"
+          >
+            <mat-icon>mode</mat-icon>
+          </button>
+          <button
+            class="button-reduced"
+            mat-icon-button
+            aria-label="Borrar"
+            (click)="eliminar(index)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

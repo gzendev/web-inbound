@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ 'confirm-dialog.borrar-registro.titulo' | translate }}</h2>
+<div>{{ 'confirm-dialog.borrar-registro.contenido' | translate }}</div>
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    mat-dialog-close
+    type="button"
+    color="basic">
+    {{ 'no' | translate }}
+  </button>
+  <button
+    mat-raised-button
+    (click)="confirm()"
+    color="warn">
+    {{ 'si' | translate }}
+  </button>
+</mat-dialog-actions>

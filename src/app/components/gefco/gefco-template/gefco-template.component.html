@@ -1,0 +1,51 @@
+<div class="gefco-templates">
+  <mat-form-field>
+    <mat-select
+      [(ngModel)]="template"
+      (selectionChange)="onTemplateSelect()"
+      [compareWith]="compareTemplate"
+      placeholder="{{ 'template' | translate }}">
+      <mat-option 
+        *ngFor="let template of templates"
+        [value]="template"
+        [ngClass]="{'readOnly': template.userId != userLogued}">
+        <span *ngIf="template.defaultTemplate">{{ template.name }}</span>
+        <span *ngIf="!template.defaultTemplate">{{ template.getFullName() }}</span>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button
+    mat-icon-button
+    (click)="openTemplateDialog(true)"
+    matTooltip="{{ 'template.create' | translate }}">
+    <mat-icon>add_circle</mat-icon>
+  </button>
+  <button
+    *ngIf="template && !template.defaultTemplate"
+    mat-icon-button
+    (click)="openTemplateDialog()"
+    matTooltip="{{ 'template.edit' | translate }}">
+    <mat-icon>edit</mat-icon>
+  </button>
+  <button
+    *ngIf="template"
+    mat-icon-button
+    (click)="onTemplateRestart()"
+    matTooltip="{{ 'template.restore' | translate }}">
+    <mat-icon>restore</mat-icon>
+  </button>
+  <button
+    *ngIf="template && !template.defaultTemplate"
+    mat-icon-button
+    (click)="onTemplateUpdate()"
+    matTooltip="{{ 'template.save' | translate }}">
+    <mat-icon>save</mat-icon>
+  </button>
+  <button
+    *ngIf="template && !template.defaultTemplate"
+    mat-icon-button
+    (click)="onTemplateDelete()"
+    matTooltip="{{ 'template.delete' | translate }}">
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

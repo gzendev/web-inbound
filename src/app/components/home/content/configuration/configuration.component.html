@@ -1,0 +1,30 @@
+<div fxLayout="column" fxLayoutGap="0.5rem" fxFlexFill>
+  <div fxFlex="0 0 auto" fxHide.xs>
+    <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="{{ 'configuration.emails' | translate }}">
+      <div fxLayout="row" fxLayoutAlign="space-around start" fxFlexFill class="root">
+        <div>
+          <app-concesionaria-select [clients]="clients" (onSelectConcesionaria)="selectConcesionaria($event)"
+            (onResetConcesionaria)="resetConcesionaria()"></app-concesionaria-select>
+        </div>
+        <div>
+          <div fxLayout="column" fxLayoutGap="0.5rem" fxFlexFill>
+            <app-email-list [disabled]="idClient === null && idConcesionaria === null" [emails]="emailsConcesionaria"
+              (addEmail)="addEmailConsecionaria($event)" (updateEmail)="updateEmailConsecionaria($event)"
+              (deleteEmail)="deleteEmailConsecionaria($event)"  #emailConcesionariaComponent></app-email-list>
+          </div>
+        </div>
+        <div>
+          <app-bocas-select [bocas]="bocas" (onSelectBoca)="selectBoca($event)" (onResetBoca)="resetBoca()">
+          </app-bocas-select>
+        </div>
+        <div>
+          <app-email-list [disabled]="codigoBocaEntrega === null" [emails]="emailsBocas" (addEmail)="addEmailBoca($event)"
+            (updateEmail)="updateEmailBoca($event)" (deleteEmail)="deleteEmailBoca($event)"  #emailBocaEntregaComponent></app-email-list>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

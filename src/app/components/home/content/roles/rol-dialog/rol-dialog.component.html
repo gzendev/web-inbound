@@ -1,0 +1,57 @@
+<div *ngIf="!loading">
+  <h2 mat-dialog-title>
+    <span *ngIf="viewing">{{ 'rol.ver' | translate }}</span>
+    <span *ngIf="!viewing">{{ 'rol.crear' | translate }}</span>
+  </h2>
+  <form #form="ngForm" fxLayout="column" novalidate>
+    <div fxLayout="row wrap" fxLayoutGap="2rem">
+      <div fxFlex>
+        <mat-form-field fxFlexFill>
+          <input
+            matInput
+            #codigoInput="ngModel"
+            [(ngModel)]="rol.id"
+            [disabled]="viewing"
+            name="codigo"
+            placeholder="{{ 'codigo' | translate }}"
+            required>
+          <mat-error *ngIf="codigoInput.hasError('required')">
+            {{ 'codigo.requerido' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlexFill>
+          <input
+            matInput
+            #descripcionInput="ngModel"
+            [(ngModel)]="rol.descripcion"
+            [disabled]="viewing"
+            name="descripcion"
+            placeholder="{{ 'descripcion' | translate }}"
+            required>
+          <mat-error *ngIf="descripcionInput.hasError('required')">
+            {{ 'descripcion.requerido' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="1rem">
+      <button
+        mat-raised-button
+        mat-dialog-close
+        type="button"
+        color="basic">
+        {{ 'volver' | translate }}
+      </button>
+      <button
+        *ngIf="!viewing"
+        mat-raised-button
+        [disabled]="form.invalid"
+        (click)="createRol()"
+        color="primary">
+        {{ 'guardar' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

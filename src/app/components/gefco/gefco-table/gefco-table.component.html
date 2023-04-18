@@ -1,0 +1,286 @@
+<div *ngIf="tableTemplate" class="gefco-table">
+  <mat-menu #rowMenu="matMenu">
+    <ng-template matMenuContent let-row="row">
+      <ng-container *ngTemplateOutlet="menu; context:{row: row}"></ng-container>
+    </ng-template>
+  </mat-menu>
+  <p-table
+    #table
+    [columns]="visibleColumns"
+    [value]="tableData"
+    [totalRecords]="tableData.length"
+    [rows]="tableTemplate.pageSize"
+    [first]="tableTemplate.pageFirst"
+    [multiSortMeta]="multiSortMeta"
+    [reorderableColumns]="true"
+    [paginator]="true"
+    [autoLayout]="true"
+    [responsive]="true"
+    [customSort]="true"
+    (onSort)="onColumnSort($event)"
+    (onColReorder)="onColumnReorder($event)"
+    (onPage)="onPageChange($event)"
+    (onRowSelect)="onRowSelect($event)"
+    (onRowExpand)="onRowExpand($event)"
+    (sortFunction)="sortColumnData($event)"
+    rowHover="true"
+    selectionMode="multiple"
+    [(selection)]="selectedRows"
+    scrollHeight="373px"
+    sortMode="multiple">
+    <ng-template pTemplate="caption">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="0.5rem">
+        <div fxFlex="0 0 auto">
+          <p-dropdown
+            [(ngModel)]="tableTemplate.pageSize"
+            [options]="pageSizeOptions"
+            (onChange)="onPageSizeChange()"
+            matTooltip="{{ 'grilla.ayuda.cantidad-filas' | translate }}">
+          </p-dropdown>
+        </div>
+        <div fxFlex="0 0 auto">
+          <p-multiSelect
+            [(ngModel)]="visibleColumns"
+            [options]="columns"
+            (onChange)="onColumnsVisibilityChange($event)"
+            optionLabel="header"
+            selectedItemsLabel="{0} {{ 'columnas-seleccionadas' | translate }}"
+            defaultLabel="{{ 'elija-columnas' | translate }}"
+            matTooltip="{{ 'grilla.ayuda.cantidad-columnas' | translate }}">
+          </p-multiSelect>
+        </div>
+        <div fxFlex="0 0 auto">
+          <input
+            pInputText
+            (input)="filterGlobal(table, $event.target.value)"
+            size="50"
+            placeholder="{{ 'filtro-global' | translate }}"
+            matTooltip="{{ 'grilla.ayuda.filtro-global' | translate }}">
+        </div>
+        <div fxFlex>
+          <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="0.5rem">
+            <app-gefco-importer *ngIf="importer" [data]="importerData"></app-gefco-importer>
+            <button
+              mat-raised-button
+              (click)="onExportRows()"
+              color="primary">
+              {{ 'exportar' | translate }}
+            </button>
+          
+            <button *ngIf="menu"
+              mat-raised-button
+              (click)="onEditRows()"
+              color="primary"
+              [matMenuTriggerFor]="rowMenu"
+              [matMenuTriggerData]="{row: selectedRows}">
+              {{ 'Editar Seleccionados' | translate }}
+            </button>
+
+            <button *ngIf="menu && showEditAll"
+              mat-raised-button
+              (click)="onEditRows()"
+              color="primary"
+              [matMenuTriggerFor]="rowMenu"
+              [matMenuTriggerData]="{row: null}">
+              {{ 'Editar Todos' | translate }}
+            </button>
+          </div>
+        </div>
+        <div fxFlex>
+          <div
+            *ngIf="tableData.length >= limit"
+            fxLayout="row"
+            fxLayoutAlign="end center"
+            (click)="showParcialResultDialog()"
+            class="cursor-pointer">
+            <mat-icon class="color-orange mr-1">warning</mat-icon>
+            <a>{{ 'grilla.resultado-parcial' | translate }}</a>
+          </div>
+          <div
+            *ngIf="tableData.length < limit"
+            fxLayout="row"
+            fxLayoutAlign="end center">
+            <span class="mr-1 font-light font-small">{{ 'registros' | translate }}:</span>
+            <span class="mr-1 font-small">{{ tableData.length }}</span>
+            <mat-icon
+              matSuffix
+              matTooltip="{{ 'grilla.ayuda.cantidad-registros' | translate }}">
+              help
+            </mat-icon>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let column of columns">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th class="sticky">
+          {{ 'acciones' | translate }}
+        </th>
+        <ng-container *ngFor="let column of columns">
+          <th
+            *ngIf="column.field !== 'acciones'"
+            pReorderableColumn
+            [pSortableColumn]="column.field">
+            {{ column.header | translate }}
+            <p-sortIcon [field]="column.field"></p-sortIcon>
+          </th>
+        </ng-container>
+      </tr>
+      <tr>
+        <th class="sticky"></th>
+        <th *ngFor="let column of columns">
+          <input
+            *ngIf="(column.field !== 'acciones')"
+            (input)="filterColumn(table, $event.target.value, column.field, column.type)"
+            class="full-width">
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-columns="columns" let-rowIndex="rowIndex" let-row >
+      <tr [pSelectableRow]="selectRow.observers.length > 0 ? row : row" [pSelectableRowIndex]="rowIndex" [ngClass]="{'inactive': !row.activoBoolean}" class= {{row.criticoEta}}>
+        <td class="sticky">
+          <div fxLayout="row" fxLayoutGap="0.5rem">
+            <div *ngIf="expandRow.observers.length > 0" fxFlex>
+              <fa-icon
+                [icon]="['fas', expanded ? 'chevron-circle-up' : 'chevron-circle-down']"
+                [fixedWidth]="true"
+                [pRowToggler]="row"
+                title="{{ 'ver-mas' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div fxFlex>
+              <fa-icon
+                [icon]="['fas', 'eye']"
+                [fixedWidth]="true"
+                (click)="onViewRow(row)"
+                title="{{ 'ver' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="row.ubicacion" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'map-marked-alt']"
+                [fixedWidth]="true"
+                (click)="onMapView(row)"
+                title="{{ 'ver' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="showEditIcon" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'pen']"
+                [fixedWidth]="true"
+                (click)="onEditRow(row)"
+                title="{{ 'editar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="showDeleteIcon" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'trash']"
+                [fixedWidth]="true"
+                [ngClass]="{'invisible': !row.activoBoolean}"
+                (click)="onDeleteRow(row)"
+                title="{{ 'borrar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="menu" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'ellipsis-v']"
+                [fixedWidth]="true"
+                [matMenuTriggerFor]="rowMenu"
+                [matMenuTriggerData]="{row: row}"
+                title="{{ 'otras-opciones' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+          </div>
+        </td>
+        <td *ngFor="let column of columns">
+          <div *ngIf="column.field !== 'cantidad' && column.type !== 'TIME'">
+            <ng-container *ngIf="column.field !== 'acciones'">
+              {{ row[column.field] }}
+            </ng-container>
+          </div>
+          <div *ngIf="column.type === 'TIME'">
+              <ng-container *ngIf="column.field !== 'acciones'">
+                {{ row[column.field] }}
+              </ng-container>
+          </div>
+          <div *ngIf="column.field === 'cantidad'" style="text-align: right;">
+              <ng-container *ngIf="column.field !== 'acciones'">
+                {{ row[column.field] }}
+              </ng-container>
+            </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-columns="columns" let-row>
+      <tr *ngFor="let expanded of row.expanded" [pSelectableRow]="selectRow.observers.length > 0 ? expanded : null" [ngClass]="{'inactive': !expanded.activoBoolean}">
+        <td class="sticky">
+          <div fxLayout="row" fxLayoutGap="0.5rem">
+            <div *ngIf="expandRow.observers.length > 0" fxFlex>
+              <fa-icon
+                [icon]="['fas', expanded ? 'chevron-circle-up' : 'chevron-circle-down']"
+                [fixedWidth]="true"
+                [pRowToggler]="expanded"
+                title="{{ 'ver-mas' | translate }}"
+                class="cursor-pointer invisible">
+              </fa-icon>
+            </div>
+            <div *ngIf="showViewIcon" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'eye']"
+                [fixedWidth]="true"
+                (click)="onViewRow(expanded)"
+                title="{{ 'ver' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="showEditIcon" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'pen']"
+                [fixedWidth]="true"
+                (click)="onEditRow(expanded)"
+                title="{{ 'editar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div *ngIf="showDeleteIcon" fxFlex>
+              <fa-icon
+                [icon]="['fas', 'trash']"
+                [fixedWidth]="true"
+                [ngClass]="{'invisible': !expanded.activoBoolean}"
+                (click)="onDeleteRow(expanded)"
+                title="{{ 'borrar' | translate }}"
+                class="cursor-pointer">
+              </fa-icon>
+            </div>
+            <div fxFlex>
+              <fa-icon
+                [icon]="['fas', 'ellipsis-v']"
+                [fixedWidth]="true"
+                [matMenuTriggerFor]="rowMenu"
+                [matMenuTriggerData]="{row: expanded}"
+                title="{{ 'otras-opciones' | translate }}"
+                class="cursor-pointer invisible">
+              </fa-icon>
+            </div>
+          </div>
+        </td>
+        <td *ngFor="let column of columns">
+          <ng-container *ngIf="column.field !== 'acciones'">
+            {{ expanded[column.field] }}
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

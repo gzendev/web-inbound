@@ -1,0 +1,228 @@
+<div *ngIf="!loading">
+  <h2 mat-dialog-title>
+    {{ 'configuracion-seguridad-usuario' | translate }}: {{ ' ' + usuario.id }}
+  </h2>
+  <mat-dialog-content>
+    <div class="py-1">
+      <mat-accordion>
+        <mat-expansion-panel *ngIf="!viewing">
+          <mat-expansion-panel-header collapsedHeight="36px" expandedHeight="36px">
+            <mat-panel-title>
+              {{ 'copiar-permisos-usuario' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <form #form="ngForm" (ngSubmit)="copyPermissions()" fxLayout="column" novalidate>
+            <div fxFlex fxLayoutGap="2rem">
+              <mat-slide-toggle
+                [(ngModel)]="copyCuentas"
+                [disabled]="viewing"
+                name="copyCuentas"
+                labelPosition="before"
+                color="accent">
+                {{ 'copiar-cuentas' | translate }}
+              </mat-slide-toggle>
+              <mat-slide-toggle
+                [(ngModel)]="copyRoles"
+                [disabled]="viewing"
+                name="copyRoles"
+                labelPosition="before"
+                color="accent">
+                {{ 'copiar-roles' | translate }}
+              </mat-slide-toggle>
+            </div>
+            <ng-container>
+              <div fxFlex  *ngIf="copyRoles">
+                <mat-form-field fxFlexFill>
+                  <mat-select
+                    #sistemaSelect="ngModel"
+                    [(ngModel)]="sistemaToCopy"
+                    [compareWith]="compareId"
+                    name="sistemaToCopy"
+                    placeholder="{{ 'sistema' | translate }}"
+                    required>
+                    <app-gefco-mat-filter
+                      [array]="sistemas"
+                      [converter]="displayFullDescription"
+                      placeholder="{{ 'buscar' | translate }}">
+                    </app-gefco-mat-filter>
+                    <mat-option *ngFor="let sistema of sistemas;" [value]="sistema">
+                      {{ sistema.getFullDescription() }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sistemaSelect.hasError('required')">
+                    {{ 'sistema.requerido' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex *ngIf="copyRoles || copyCuentas">
+                <mat-form-field fxFlexFill>
+                  <input
+                    matInput
+                    #usuarioInput="ngModel"
+                    [(ngModel)]="usuarioToCopyText"
+                    [matAutocomplete]="usuatioToCopyAutocomplete"
+                    (input)="onUsuarioToCopyChanged()"
+                    name="usuarioToCopy"
+                    placeholder="{{ 'usuario-origen' | translate }}"
+                    required>
+                  <mat-autocomplete
+                    #usuatioToCopyAutocomplete="matAutocomplete"
+                    [displayWith]="displayFullDescription"
+                    (optionSelected)="onUsuarioToCopySelected($event)">
+                    <mat-option *ngFor="let usuarioToCopy of usuariosToCopy" [value]="usuarioToCopy">
+                      {{ usuarioToCopy.getFullDescription() }}
+                    </mat-option>
+                  </mat-autocomplete>
+                  <mat-error *ngIf="usuarioInput.hasError('required')">
+                    {{ 'usuario.requerido' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div fxFlex *ngIf="copyRoles || copyCuentas">
+                <button
+                  mat-raised-button
+                  [disabled]="form.invalid || !usuarioToCopy"
+                  color="primary"
+                  type="submit">
+                  {{ 'copiar-permisos' | translate }}
+                </button>
+              </div>
+            </ng-container>
+          </form>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header collapsedHeight="36px" expandedHeight="36px">
+            <mat-panel-title>
+              {{ 'asignacion-cuentas' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <form #form="ngForm" (ngSubmit)="saveCuentas()" fxLayout="column" fxLayoutGap="1rem" novalidate>
+            <div fxFlex>
+              <p-pickList
+                [source]="availableCuentas"
+                [target]="selectedCuentas"
+                [trackBy]="trackById"
+                [responsive]="true"
+                [showSourceControls]="false"
+                [showTargetControls]="false"
+                [showSourceFilter]="true"
+                [showTargetFilter]="true"
+                [disabled]="viewing"
+                filterBy="id,descripcion"
+                sourceHeader="{{ 'cuentas-disponibles' | translate }}"
+                targetHeader="{{ 'cuentas-asiganadas' | translate }}"
+                sourceFilterPlaceholder="{{ 'filtrar-id-descripcion' | translate }}"
+                targetFilterPlaceholder="{{ 'filtrar-id-descripcion' | translate }}">
+                <ng-template let-cuenta pTemplate="item">
+                  <div fxLayout="row wrap" fxLayoutGap="1rem">
+                    <div fxFlex="15%">
+                      {{ cuenta.id }}
+                    </div>
+                    <div fxFlex>
+                      {{ cuenta.descripcion }}
+                    </div>
+                  </div>
+                </ng-template>
+              </p-pickList>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="1rem">
+              <button
+                *ngIf="!viewing"
+                mat-raised-button
+                [disabled]="form.invalid"
+                color="primary"
+                type="submit">
+                {{ 'guardar' | translate }}
+              </button>
+            </div>
+          </form>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header collapsedHeight="36px" expandedHeight="36px">
+            <mat-panel-title>
+              {{ 'asignacion-roles' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <form #form="ngForm" (ngSubmit)="saveRoles()" fxLayout="column" fxLayoutGap="1rem" novalidate>
+            <div fxLayout="column">
+              <div fxFlex>
+                <mat-form-field fxFlexFill>
+                  <mat-select
+                    #sistemaSelect="ngModel"
+                    [(ngModel)]="sistema"
+                    [disabled]="viewing"
+                    [compareWith]="compareId"
+                    (selectionChange)="onSistemaSelected()"
+                    name="sistema"
+                    placeholder="{{ 'sistema' | translate }}"
+                    required>
+                    <mat-option>
+                        <app-gefco-mat-filter
+                          [array]="sistemas"
+                          [converter]="displayFullDescription"
+                          placeholder="{{ 'buscar' | translate }}">
+                        </app-gefco-mat-filter>
+                    </mat-option>
+                    <mat-option *ngFor="let sistema of sistemas;" [value]="sistema">
+                      {{ sistema.getFullDescription() }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="sistemaSelect.hasError('required')">
+                    {{ 'sistema.requerido' | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div *ngIf="sistema" fxFlex>
+                <p-pickList
+                  [source]="availableRoles"
+                  [target]="selectedRoles"
+                  [trackBy]="trackById"
+                  [responsive]="true"
+                  [showSourceControls]="false"
+                  [showTargetControls]="false"
+                  [showSourceFilter]="true"
+                  [showTargetFilter]="true"
+                  [disabled]="viewing"
+                  filterBy="value.cuenta.id,value.cuenta.descripcion"
+                  sourceHeader="{{ 'roles-disponibles' | translate }}"
+                  targetHeader="{{ 'roles-asiganadas' | translate }}"
+                  sourceFilterPlaceholder="{{ 'filtrar-id-descripcion' | translate }}"
+                  targetFilterPlaceholder="{{ 'filtrar-id-descripcion' | translate }}">
+                  <ng-template let-rol pTemplate="item">
+                    <div fxLayout="row wrap" fxLayoutGap="1rem">
+                      <div fxFlex="15%">
+                        {{ rol.id }}
+                      </div>
+                      <div fxFlex>
+                        {{ rol.descripcion }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-pickList>
+              </div>
+            </div>
+            <div fxLayout="row wrap" fxLayoutGap="1rem">
+              <button
+                *ngIf="!viewing"
+                mat-raised-button
+                [disabled]="form.invalid"
+                color="primary"
+                type="submit">
+                {{ 'guardar' | translate }}
+              </button>
+            </div>
+          </form>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-raised-button
+      mat-dialog-close
+      type="button"
+      color="basic">
+      {{ 'volver' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

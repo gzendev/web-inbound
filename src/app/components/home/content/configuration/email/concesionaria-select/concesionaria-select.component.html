@@ -1,0 +1,17 @@
+<!-- <h3 class="title">{{ 'configuration.email.concesionaria' | translate}}</h3> -->
+<div flexLayout="column">
+  <!-- <h2 mat-dialog-title class="mat-card-subtitle"><span>{{ 'configuration.email.concesionaria' | translate }}</span></h2> -->
+  <mat-form-field>
+    <mat-label>{{ 'configuration.email.concesionaria' | translate }}</mat-label>
+    <mat-select [value]="'none'" [disabled]="clients.length == 0">
+      <mat-option [value]="'none'" (click)="resetConcesionaria()">{{ 'seleccionar' | translate}}</mat-option>
+      <mat-optgroup *ngFor="let client of clients; index as index" [label]="client.descripcion">
+        <mat-option *ngFor="let concesionaria of client.concesionarios"
+          [value]="concesionaria.codigoConcesionario + '-' + concesionaria.descripcion"
+          (click)="selectConcesionaria(concesionaria)">
+          {{ concesionaria.codigoConcesionario + ' - ' + concesionaria.descripcion }}
+        </mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+</div>

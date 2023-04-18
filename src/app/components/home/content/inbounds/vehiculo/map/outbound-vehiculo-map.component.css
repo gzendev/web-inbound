@@ -1,0 +1,50 @@
+mat-selection-list {
+  overflow: auto;
+}
+
+.vin-detalle {
+  font-weight: bold !important;
+}
+
+.descripcion-detalle {
+  font-size: 12px !important;
+}
+
+.fecha-detalle {
+  font-size: 12px !important;
+}
+
+.item-detalle {
+  height: 60px !important; /** experiment with height **/
+}
+
+.mapa-container {
+  width: 100% !important;
+  height: 97.6% !important;
+}
+
+.map-container {
+  position: relative;
+  padding-bottom: 26.25%;
+  padding-top: 30px;
+  height: 0;
+  overflow: hidden;
+}
+
+.map-container iframe,
+.map-container object,
+.map-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 95%;
+  border: none;
+}
+
+.head-mapa {
+  display: flex;
+  width: 80%;
+  flex-direction: row;
+  justify-content: space-between;
+}
